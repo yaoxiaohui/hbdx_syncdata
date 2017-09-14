@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--定时加载的目标类-->
+    <bean id="tableInfoSyncController" class="com.sync.control.TableInfoSyncController"/>
+
+    <!--定时器详情-->
+    <bean id="tableInfoSyncControllerJob"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+          p:targetObject-ref="tableInfoSyncController" p:targetMethod="run" p:concurrent="false"/>
+
+    <!-- 定义时间间隔触发器  每隔10秒执行一次-->
+    <bean id="tableInfoSyncControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+          p:jobDetail-ref="tableInfoSyncControllerJob" p:cronExpression="0 56 15 * * ?"/>
+
+    <!--启动定时器-->
+    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="triggers">
+            <list>
+                <ref bean="tableInfoSyncControllerTrigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>
