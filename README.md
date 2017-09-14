@@ -1,2 +1,2 @@
-# hbdx_syncdata
-数据同步程序
+# hbdx数据同步程序
+
