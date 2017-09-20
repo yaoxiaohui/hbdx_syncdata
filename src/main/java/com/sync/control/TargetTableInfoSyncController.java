@@ -9,21 +9,21 @@ import java.util.Map;
 
 /**
  * @Author ljw
- * @Description :表信息同步任务
+ * @Description :表信息同步任务（同步到目标表）
  * @Date Created in 18:39 2017/9/04.
  * @Modified By :
  */
-public class TableInfoSyncController{
+public class TargetTableInfoSyncController {
 
-    private static final Logger log = Logger.getLogger(TableInfoSyncController.class);
+    private static final Logger log = Logger.getLogger(TargetTableInfoSyncController.class);
     TableInfoService tableInfoService = new TableInfoServiceImpl();
 
     public void run(){
         try {
-            log.info("=============================TableInfoSyncControl run===============================");
+            log.info("=============================TableInfoSyncControl start===============================");
             List<Map<String, String>> mapList = tableInfoService.queryTableInfo();
             log.info(">>>>>>>>>获得数据："+mapList.size()+"条");
-            tableInfoService.addData(mapList);
+//            tableInfoService.addData(mapList);
             log.info("=============================TableInfoSyncControl stop===============================");
         }catch (Exception e) {
             log.error("TableInfoSyncControl.run() is error >>>>>>", e);

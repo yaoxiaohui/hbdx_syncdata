@@ -62,14 +62,14 @@ public class TableInfoDaoImpl implements TableInfoDao {
     /**
      * 添加数据
      */
-    public void addData(List<Map<String, String>> mapList) {
-        String fields2 = DBConnection.TABLEINFO_PROPERTIES.get("fields2").trim();
-        String table2 = DBConnection.TABLEINFO_PROPERTIES.get("table2").trim();
+    public void addData(List<Map<String, String>> mapList, String table, String fields) {
+//        String fields = DBConnection.TABLEINFO_PROPERTIES.get("fields").trim();
+//        String table = DBConnection.TABLEINFO_PROPERTIES.get("table").trim();
 
         PreparedStatement ps = null;
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         try {
-            String[] fieldArray = fields2.split(",");
+            String[] fieldArray = fields.split(",");
             StringBuffer temp = new StringBuffer();
             for (int i = 0; i < fieldArray.length; i++) {
                 temp.append("?");
@@ -78,7 +78,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
                 }
             }
             conn.setAutoCommit(false);
-            String sql = "insert into " + table2 + " (" + fields2 + ") values("+temp+")";
+            String sql = "insert into " + table + " (" + fields + ") values("+temp+")";
             ps = conn.prepareStatement(sql);
             for (int i = 0; i < mapList.size(); i++) {
                 Map<String, String> map = mapList.get(i);
