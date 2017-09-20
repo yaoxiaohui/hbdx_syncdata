@@ -1,10 +1,11 @@
 package util;
 
+import com.sync.control.TargetTableInfoSyncController;
+import org.apache.log4j.Logger;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 文件处理
@@ -13,6 +14,59 @@ import java.util.Set;
  * 2017/9/04 上午9:40:17
  */
 public class FileProcess {
+
+    private static final Logger log = Logger.getLogger(FileProcess.class);
+    /**
+     * 读取文件内容
+     * @param filePath
+     * @return
+     */
+    public static List<Map<String, String>> readFile(String filePath, String[] tableField) {
+
+        List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
+        try {
+            File file = new File(filePath);
+            if(file.exists()){
+                InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file));
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    String[] fieldValue = line.split("\\|");
+                    Map<String, String> map = new HashMap<String, String>();
+                    for (int i = 0; i < tableField.length; i++) {
+                        if(tableField.length != fieldValue.length){
+                            continue;
+                        }
+                        map.put(tableField[i], fieldValue[i]);
+                    }
+                    mapList.add(map);
+                }
+            }else{
+                log.info("此路径下的文件不存在>>>>>>>>>>>>>>>>>>>>"+filePath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mapList;
+    }
+    /**
+     * 字符串数组转以逗号为分割的字符串
+     *
+     * @param strArray
+     * @return
+     */
+    public static String arrayToString(String[] strArray){
+        StringBuffer stringBuffer = new StringBuffer();
+        for(int i = 0; i < strArray.length; i++){
+            if(i == strArray.length-1){
+                stringBuffer. append(strArray[i]);
+            }else{
+                stringBuffer. append(strArray[i]+",");
+            }
+        }
+        return stringBuffer.toString();
+    }
 
     /**
      * 部分中文标点转英文

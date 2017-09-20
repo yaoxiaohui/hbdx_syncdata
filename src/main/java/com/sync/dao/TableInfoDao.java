@@ -13,5 +13,5 @@ public interface TableInfoDao {
 
     List<Map<String, String>> queryTableInfo();
 
-    void addData(List<Map<String, String>> mapList);
+    void addData(List<Map<String, String>> mapList, String table, String fields);
 }

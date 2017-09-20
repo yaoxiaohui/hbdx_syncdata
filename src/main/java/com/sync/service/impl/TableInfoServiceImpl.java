@@ -18,7 +18,7 @@ public class TableInfoServiceImpl implements TableInfoService {
         return new TableInfoDaoImpl().queryTableInfo();
     }
 
-    public void addData(List<Map<String, String>> mapList) {
-        new TableInfoDaoImpl().addData(mapList);
+    public void addData(List<Map<String, String>> mapList, String table, String fields) {
+        new TableInfoDaoImpl().addData(mapList, table, fields);
     }
 }

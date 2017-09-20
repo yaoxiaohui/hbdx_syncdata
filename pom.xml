@@ -258,7 +258,7 @@
     <build>
         <finalName>HBTelesync</finalName>
         <filters>
-            <filter>src/main/filters/${environment}-filter.properties</filter>
+            <filter>src/main/resources/filters/${environment}-filter.properties</filter>
         </filters>
         <resources>
             <resource>

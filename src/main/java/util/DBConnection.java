@@ -21,7 +21,7 @@ public class DBConnection {
 
     static {
         try {
-            Class.forName(DB_PROPERTIES.get("driver"));
+//          Class.forName(DB_PROPERTIES.get("driver"));
             Class.forName(DB_PROPERTIES.get("localdriver"));
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
