@@ -2,6 +2,7 @@ package com.sync.dao.impl;
 
 import com.sync.dao.TableInfoDao;
 import com.sync.pojo.LogInfo;
+import com.sync.pojo.WorkOrderBean;
 import org.apache.log4j.Logger;
 import util.DBConnection;
 import util.JsonUtil;
@@ -30,33 +31,38 @@ public class TableInfoDaoImpl implements TableInfoDao {
     /**
      * 查询数据
      */
-    public List<Map<String, String>> queryTableInfo() {
-        String fields1 = DBConnection.TABLEINFO_PROPERTIES.get("fields1").trim();
-        String table1 = DBConnection.TABLEINFO_PROPERTIES.get("table1").trim();
-        List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
+    public List<WorkOrderBean> queryTableInfo() {
+//        String fields1 = DBConnection.TABLEINFO_PROPERTIES.get("fields1").trim();
+//        String table1 = DBConnection.TABLEINFO_PROPERTIES.get("table1").trim();
+        List<WorkOrderBean> beanList = new ArrayList<WorkOrderBean>();
 
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("url"), DBConnection.DB_PROPERTIES.get("username"), DBConnection.DB_PROPERTIES.get("password"));
         PreparedStatement ps = null;
         ResultSet rs = null;
 //      String sql = "select " + fields1 + " from " + table1+" limit 100";
-        String sql = "SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT * FROM " + table1 + ") A WHERE ROWNUM <= 100 ) WHERE RN >= 1";
-        String[] fieldArray = fields1.split(",");
+        String sql = "SELECT sr.CALLERNO, sr.ACCEPTTIME, sr.CONTACTID, sr.SUBSCITY, sr.ACCEPTCITY, cct.STAFFID, t.FILENAME" +
+                " FROM (T_SR_SERVICEREQUEST sr LEFT JOIN T_CCT_CONTACTDETAIL cct ON sr.CONTACTID = cct.CONTACTID)" +
+                " LEFT JOIN TRECORDINFO9 t ON cct.CALLID = t.CALLID";
         try {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Map<String, String> map = new HashMap<String, String>();
-                for (int i = 0; i < fieldArray.length; i++) {
-                    map.put(fieldArray[i], String.valueOf(rs.getObject(fieldArray[i])));
-                }
-                mapList.add(map);
+                WorkOrderBean workOrderBean = new WorkOrderBean();
+                workOrderBean.setSerialNum(String.valueOf(rs.getObject("CONTACTID")));//流水号
+                workOrderBean.setCustomerServiceId(String.valueOf(rs.getObject("STAFFID")));//受理员工号
+                workOrderBean.setCallTime(String.valueOf(rs.getObject("ACCEPTTIME")));//来电时间
+                workOrderBean.setPhoneNum(String.valueOf(rs.getObject("CALLERNO")));//来电号码
+                workOrderBean.setAudioPath(String.valueOf(rs.getObject("FILENAME")));//语音路径
+                workOrderBean.setAcceptLocation(String.valueOf(rs.getObject("ACCEPTCITY")));//受理地
+                workOrderBean.setPhoneLocation(String.valueOf(rs.getObject("SUBSCITY")));//来电归属地
+                beanList.add(workOrderBean);
             }
         } catch (SQLException e) {
             log.error("TableInfoDaoImpl.queryTableInfo() >>>>>>", e);
         } finally {
             dbConnection.close(ps, rs, null, conn);
         }
-        return mapList;
+        return beanList;
     }
 
     /**

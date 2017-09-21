@@ -2,6 +2,7 @@ package util;
 
 import com.sync.control.TargetTableInfoSyncController;
 import org.apache.log4j.Logger;
+import sun.net.ftp.FtpClient;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -21,34 +22,72 @@ public class FileProcess {
      * @param filePath
      * @return
      */
-    public static List<Map<String, String>> readFile(String filePath, String[] tableField) {
+    public static List<Map<String, String>> readFile(FtpClient ftpClient, String filePath, String[] tableField) {
 
         List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
+        InputStream inputStream = null;
         try {
-            File file = new File(filePath);
-            if(file.exists()){
-                InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file));
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            inputStream = ftpClient.getFileStream(filePath);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                String line = "";
-                while ((line = bufferedReader.readLine()) != null) {
-                    String[] fieldValue = line.split("\\|");
-                    Map<String, String> map = new HashMap<String, String>();
-                    for (int i = 0; i < tableField.length; i++) {
-                        if(tableField.length != fieldValue.length){
-                            continue;
-                        }
-                        map.put(tableField[i], fieldValue[i]);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] fieldValue = line.split("\\|");
+                Map<String, String> map = new HashMap<String, String>();
+                for (int i = 0; i < tableField.length; i++) {
+                    if(tableField.length != fieldValue.length){
+                        continue;
                     }
-                    mapList.add(map);
+                    map.put(tableField[i], fieldValue[i]);
                 }
-            }else{
-                log.info("此路径下的文件不存在>>>>>>>>>>>>>>>>>>>>"+filePath);
+                mapList.add(map);
             }
+            //修改已同步的文件名
+            ftpClient.rename(filePath,filePath+".common");
+            /*File oldFile = new File(filePath);
+            //检查要重命名的文件是否存在，是否是文件
+            if (!oldFile.exists() || oldFile.isDirectory()) {
+                System.out.println("File does not exist: " + filePath);
+            }
+            inputstreamtofile(inputStream,oldFile);
+            //修改文件名
+            File newFile = new File(filePath+".common");
+            if (oldFile.renameTo(newFile)) {
+                System.out.println("File has been renamed.");
+            } else {
+                System.out.println("Error renmaing file");
+            }*/
+
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return mapList;
+    }
+
+    /**
+     * InputStream转为File
+     * @param ins
+     * @param file
+     */
+    public static File inputstreamtofile(InputStream ins,File file) throws Exception {
+        OutputStream os = new FileOutputStream(file);
+        int bytesRead = 0;
+        byte[] buffer = new byte[8192];
+        while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+            os.write(buffer, 0, bytesRead);
+        }
+        os.close();
+        ins.close();
+        return file;
     }
     /**
      * 字符串数组转以逗号为分割的字符串

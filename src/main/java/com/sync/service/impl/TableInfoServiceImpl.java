@@ -1,6 +1,7 @@
 package com.sync.service.impl;
 
 import com.sync.dao.impl.TableInfoDaoImpl;
+import com.sync.pojo.WorkOrderBean;
 import com.sync.service.TableInfoService;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class TableInfoServiceImpl implements TableInfoService {
 
-    public List<Map<String, String>> queryTableInfo() {
+    public List<WorkOrderBean> queryTableInfo() {
         return new TableInfoDaoImpl().queryTableInfo();
     }
 

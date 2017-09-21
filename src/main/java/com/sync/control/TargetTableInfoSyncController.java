@@ -1,5 +1,6 @@
 package com.sync.control;
 
+import com.sync.pojo.WorkOrderBean;
 import com.sync.service.TableInfoService;
 import com.sync.service.impl.TableInfoServiceImpl;
 import org.apache.log4j.Logger;
@@ -21,9 +22,9 @@ public class TargetTableInfoSyncController {
     public void run(){
         try {
             log.info("=============================TableInfoSyncControl start===============================");
-            List<Map<String, String>> mapList = tableInfoService.queryTableInfo();
-            log.info(">>>>>>>>>获得数据："+mapList.size()+"条");
-//            tableInfoService.addData(mapList);
+            List<WorkOrderBean> beanList = tableInfoService.queryTableInfo();
+            log.info(">>>>>>>>>获得数据："+beanList.size()+"条");
+//          tableInfoService.addData(mapList);
             log.info("=============================TableInfoSyncControl stop===============================");
         }catch (Exception e) {
             log.error("TableInfoSyncControl.run() is error >>>>>>", e);

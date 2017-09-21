@@ -1,5 +1,7 @@
 package com.sync.dao;
 
+import com.sync.pojo.WorkOrderBean;
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ import java.util.Map;
  */
 public interface TableInfoDao {
 
-    List<Map<String, String>> queryTableInfo();
+    List<WorkOrderBean> queryTableInfo();
 
     void addData(List<Map<String, String>> mapList, String table, String fields);
 }
