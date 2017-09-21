@@ -22,7 +22,7 @@
           p:jobDetail-ref="tableInfoSyncControllerJob" p:cronExpression="0 56 15 * * ?"/>
   <!-- 定义时间间隔触发器-->
     <bean id="resourceTableInfoSyncControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
-          p:jobDetail-ref="resourceTableInfoSyncControllerJob" p:cronExpression="0 03 15 * * ?"/>
+          p:jobDetail-ref="resourceTableInfoSyncControllerJob" p:cronExpression="0 46 14 * * ?"/>
 
     <!--启动定时器-->
     <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
