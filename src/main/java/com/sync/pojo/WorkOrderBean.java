@@ -15,4 +15,5 @@ public class WorkOrderBean {
        private String keyword; 
        private String emotion; 
        private String matchCategory;
+       private String sourceAudioPath;
 }

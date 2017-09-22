@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * @Author ljw
- * @Description :表信息同步任务（同步到目标表）
+ * @Description :表信息同步任务（同步和分析到目标表）
  * @Date Created in 18:39 2017/9/04.
  * @Modified By :
  */
@@ -22,9 +22,11 @@ public class TargetTableInfoSyncController {
     public void run(){
         try {
             log.info("=============================TableInfoSyncControl start===============================");
+            //从原始表取出数据
             List<WorkOrderBean> beanList = tableInfoService.queryTableInfo();
             log.info(">>>>>>>>>获得数据："+beanList.size()+"条");
-//          tableInfoService.addData(mapList);
+            //分析并插入数据
+            tableInfoService.addTagartTableData(beanList);
             log.info("=============================TableInfoSyncControl stop===============================");
         }catch (Exception e) {
             log.error("TableInfoSyncControl.run() is error >>>>>>", e);

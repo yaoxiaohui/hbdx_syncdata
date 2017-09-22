@@ -1,5 +1,6 @@
 package com.sync.service;
 
+import com.sync.pojo.CategoryBean;
 import com.sync.pojo.WorkOrderBean;
 
 import java.util.List;
@@ -15,5 +16,9 @@ public interface TableInfoService {
 
     List<WorkOrderBean> queryTableInfo();
 
+    List<CategoryBean> queryTableInfoCategory();
+
     void addData(List<Map<String, String>> mapList, String table, String fields);
+
+    void addTagartTableData(List<WorkOrderBean> beanList);
 }

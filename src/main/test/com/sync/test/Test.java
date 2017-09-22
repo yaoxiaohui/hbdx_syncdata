@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class Test {
 
-   /* public static void main(String[] sad) {
+    /*public static void main(String[] sad) {
         String modelString = "[{'name':'负面-政府负面-环保问题-水体污染','nice':'环保问题','keys':'变差,变黄,浑浊,异常,水域,河流,河水,湖水,海洋,地下水,自来水,污水,废水,脏水,臭水,红水,黄水,黑水,海域'},{'name':'负面-政府负面-腐败问题-霸占问题','nice':'腐败问题','keys':'路霸侵吞霸占霸市菜霸街霸警霸冒领退税款无端被强征暴力毁占疯狂抢占强占鱼池被无故因开挖提水站占用土地'},{'name':'负面-政府负面-民生问题-土地问题','nice':'民生问题','keys':'强制征地非法占用占用农田倒卖集体土地非法征地数量大\n'}]";
         //D:\\zhxg\\doc  表示日志输出位置  可以为空
         String ds = RunClass.init(modelString, "D:\\zhxg\\doc");
@@ -45,7 +45,7 @@ public class Test {
         System.out.println(result);
     }*/
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         Runtime runtime = Runtime.getRuntime();
         //因为在命令窗口进行mysql数据库的导入一般分三步走，所以所执行的命令将以字符串数组的形式出现
         //根据属性文件的配置获取数据库导入所需的命令，组成一个数组
@@ -54,8 +54,10 @@ public class Test {
 //        String cmdarray[] = {"\"C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe\" -uroot -proot", "use hbdx",
 //        "load data infile \"D:\\CONTACTDETAIL-201709151717.txt\" replace into table T_CCT_CONTACTDETAIL fields terminated by'|';"};
 
+//        String cmdarray[] = {"\"C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe\" -uroot -proot", "use hbdx",
+//                "load data infile \"D:\\SERVICEREQUEST-201709141500.txt\" replace into table T_SR_SERVICEREQUEST fields terminated by'|';"};
         String cmdarray[] = {"\"C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe\" -uroot -proot", "use hbdx",
-                "load data infile \"D:\\SERVICEREQUEST-201709141500.txt\" replace into table T_SR_SERVICEREQUEST fields terminated by'|';"};
+                "load data infile \"D:\\SERVICEREQUEST-201709141500.txt\" replace into table t_c_users fields terminated by'|';"};
 
         Process process;
         try {
@@ -75,7 +77,7 @@ public class Test {
             e.printStackTrace();
         }
         System.out.println("执行完成");
-    }*/
+    }
 
     //txt文件读取
     /*public static void main(String[] args) {
@@ -93,16 +95,15 @@ public class Test {
         }
     }*/
 
-    @SuppressWarnings("restriction")
-    public static void main(String[] args) throws FtpProtocolException {
-
-        FtpClient ftpClient = FtpUtil.connect("136.142.25.4", 21, "testvoice", "testvoice", "/");
-        System.out.println("===="+ftpClient.isPassiveModeEnabled());
-        System.out.println("getFileList: "+FtpUtil.getFileList(ftpClient, "/").get(0));
-//        long ll = FtpUtil.downloadFile(ftpClient, "/test/test.txt", "E:\\test\\test.txt");
-//        System.out.println("long : "+ll);
-        FtpUtil.closeServer(ftpClient);
-    }
+//    public static void main(String[] args) throws FtpProtocolException {
+//
+//        FtpClient ftpClient = FtpUtil.connect("136.142.25.4", 21, "testvoice", "testvoice", "/");
+//        System.out.println("===="+ftpClient.isPassiveModeEnabled());
+//        System.out.println("getFileList: "+FtpUtil.getFileList(ftpClient, "/").get(0));
+////        long ll = FtpUtil.downloadFile(ftpClient, "/test/test.txt", "E:\\test\\test.txt");
+////        System.out.println("long : "+ll);
+//        FtpUtil.closeServer(ftpClient);
+//    }
 
 }
 
