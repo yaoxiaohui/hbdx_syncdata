@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="sync:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="HBTelesync.war">
-      <element id="artifact" artifact-name="sync:war exploded" />
-    </root>
-  </artifact>
-</component>
