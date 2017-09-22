@@ -2,6 +2,8 @@ package util;
 
 import com.sync.control.TargetTableInfoSyncController;
 import org.apache.log4j.Logger;
+import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 import sun.net.ftp.FtpClient;
 
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +61,86 @@ public class FileProcess {
                 System.out.println("Error renmaing file");
             }*/
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mapList;
+    }
+
+    /**
+     * 读取文件，返回<主键，信息>映射
+     *
+     * @param ftpClient ftp客户端
+     * @param filePath 文件路径
+     * @param keyFieldIndex 主键所对应index
+     * @return
+     */
+    public static Map<String, String> readFile(FtpClient ftpClient, String filePath, int keyFieldIndex) {
+
+        Map<String, String> mapList = new HashMap<String, String>();
+        InputStream inputStream = null;
+        try {
+            inputStream = ftpClient.getFileStream(filePath);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] fieldValue = line.split("\\|");
+                mapList.put(fieldValue[keyFieldIndex],line);
+            }
+            //修改已同步的文件名
+            ftpClient.rename(filePath,filePath+".common");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mapList;
+    }
+
+    /**
+     * 读取文件，返回排除异常信息行的每行信息列表
+     *
+     * @param ftpClient ftp客户端
+     * @param filePath 文件路径
+     * @param condIndex 异常信息判断列
+     * @param condVal 异常值
+     * @return
+     */
+    public static List<String> readFile(FtpClient ftpClient, String filePath, int condIndex,String condVal) {
+
+        List<String> mapList = new ArrayList<String>();
+        InputStream inputStream = null;
+        try {
+            inputStream = ftpClient.getFileStream(filePath);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] fieldValue = line.split("\\|");
+                // 过滤空或0的列
+                if(StringUtils.isEmpty(fieldValue[condIndex]) || fieldValue[condIndex].equals(condVal)){
+                    continue;
+                }
+                mapList.add(line);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
