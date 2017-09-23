@@ -95,10 +95,13 @@ public class FileProcess {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] fieldValue = line.split("\\|");
+                if(fieldValue.length - 1 < keyFieldIndex){
+                    continue;
+                }
                 mapList.put(fieldValue[keyFieldIndex],line);
             }
-            //修改已同步的文件名
-            ftpClient.rename(filePath,filePath+".common");
+//            //修改已同步的文件名
+//            ftpClient.rename(filePath,filePath+".common");
 
         } catch (Exception e) {
             e.printStackTrace();
