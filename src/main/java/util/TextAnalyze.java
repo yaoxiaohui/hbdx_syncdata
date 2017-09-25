@@ -9,6 +9,7 @@ import com.zhxg.doc_classify.runstart.RunClass;
 import com.zhxg.gdjl.CalModelCluster;
 import com.zhxg.gdjl.InfoPair;
 import com.zhxg.gdjl.ModelCluster;
+import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +21,8 @@ public class TextAnalyze {
     /**
      * 拼接模型json
      */
-    public static String getModelStr(){
+    public static String getModelStr(List<CategoryBean> sonCategoryList){
 
-        TableInfoService tableInfoService = new TableInfoServiceImpl();
-
-        List<CategoryBean> sonCategoryList = tableInfoService.queryTableInfoCategory();
         List<Map> modelStrList = new ArrayList<>();
         for(CategoryBean category:sonCategoryList){
             Map<String,String> modelMap = new HashMap<>();
@@ -34,18 +32,50 @@ public class TextAnalyze {
             modelStrList.add(modelMap);
             modelMap = null;
         }
-        return JSONUtils.toJSONString(modelStrList);
+        return JsonUtil.toJSONString(modelStrList);
     }
 
     /**
      * 标签分析
      */
-    public static String categoryAnalyze(String modelString, String content) {
-//        String modelString = "[{'name':'负面-政府负面-环保问题-水体污染','nice':'环保问题','keys':'变差,变黄,浑浊,异常,水域,河流,河水,湖水,海洋,地下水,自来水,污水,废水,脏水,臭水,红水,黄水,黑水,海域'},{'name':'负面-政府负面-腐败问题-霸占问题','nice':'腐败问题','keys':'路霸侵吞霸占霸市菜霸街霸警霸冒领退税款无端被强征暴力毁占疯狂抢占强占鱼池被无故因开挖提水站占用土地'},{'name':'负面-政府负面-民生问题-土地问题','nice':'民生问题','keys':'强制征地非法占用占用农田倒卖集体土地非法征地数量大\n'}]";
-        //D:\\zhxg\\doc  表示日志输出位置  可以为空
-        RunClass.init(modelString, "");
-        String result = RunClass.run("", content);
-        return result;
+    public static Map<String, Object> categoryAnalyze(String modelString, List<WorkOrderBean> workOrderBeans, List<CategoryBean> categoryBeans) {
+
+        for (int i = 0; i < workOrderBeans.size() ; i++) {
+
+            WorkOrderBean workOrderBean = workOrderBeans.get(i);
+
+            String content = workOrderBean.getTextContent();
+            RunClass.init(modelString, "");
+            String result = RunClass.run("", content);
+            System.out.println("result>>>>>>"+result);
+            JSONObject jsonObjectResult = new JSONObject(result);
+            JSONObject jsonObjectClassify = (JSONObject) jsonObjectResult.get("result");
+            String classify = (String) jsonObjectClassify.get("classify");
+            System.out.println("classify>>>>>>"+classify);
+
+            if(classify != null && !("").equals(classify)){
+                String fatherClassify = classify.split("-")[0];//父分类
+                System.out.println("fatherClassify>>>>>>"+fatherClassify);
+
+                String[] classifyArray = classify.split(" ");
+                int count = 0;
+                for (int j = 0; j < classifyArray.length; j++) {
+                    String sonClassifyString = classifyArray[i];
+                    String[] sonClassifyStringArray = sonClassifyString.split("\\(");
+                    String sonClassify = sonClassifyStringArray[0];//子分类标签
+                    String sonClassifyCount = sonClassifyStringArray[1].substring(0,sonClassifyStringArray[1].length()-1);//数值
+
+                    System.out.println("sonClassify>>>>>>"+sonClassify);
+                    System.out.println("sonClassifyCount>>>>>>"+sonClassifyCount);
+
+
+                    count = count + Integer.parseInt(sonClassifyCount);
+
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

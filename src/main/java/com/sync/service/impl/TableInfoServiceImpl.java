@@ -31,4 +31,8 @@ public class TableInfoServiceImpl implements TableInfoService {
         new TableInfoDaoImpl().addTagartTableData(beanList);
     }
 
+    public void dataGetAndAnalyze() {
+        new TableInfoDaoImpl().dataGetAndAnalyze();
+    }
+
 }

@@ -32,12 +32,15 @@ public class DemoTest {
 //        }
 //      }
     public static void main(String[] args) throws IOException, InterruptedException {
-        String cmd = "cmd /c dir c:\\windows";
+      /*  String cmd = "cmd /c dir c:\\windows";
         final Process process = Runtime.getRuntime().exec(cmd);
         printMessage(process.getInputStream());
         printMessage(process.getErrorStream());
         int value = process.waitFor();
-        System.out.println(value);
+        System.out.println(value);*/
+        String temp = "1709210000032436";
+        System.out.println(Integer.parseInt(temp));
+
     }
     private static void printMessage(final InputStream input) {
         new Thread(new Runnable() {

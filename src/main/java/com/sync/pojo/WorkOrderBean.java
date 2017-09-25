@@ -16,4 +16,9 @@ public class WorkOrderBean {
        private String emotion; 
        private String matchCategory;
        private String sourceAudioPath;
+       private String textContent;//语音文本
+       private String countyAlias;//地区表的别名 例如：SJZ-JZ
+       private String isAnalyze;//是否已经分析
+       private String cid;//地区id
+
 }

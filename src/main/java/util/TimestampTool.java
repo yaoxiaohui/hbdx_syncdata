@@ -88,6 +88,15 @@ public class TimestampTool {
         return jDt;
     }
 
+  /**
+     * 转换为日期类型 yyyy-MM-dd HH:mm:ss
+     */
+    public static String getCurDate() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
+        return date;
+    }
+
     /**
      * 返回日期 格式:2006-07-05
      */

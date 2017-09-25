@@ -7,22 +7,28 @@
     <!--定时加载的目标类-->
     <bean id="tableInfoSyncController" class="com.sync.control.TargetTableInfoSyncController"/>
     <bean id="resourceTableInfoSyncController" class="com.sync.control.ResourceTableInfoSyncController"/>
+    <bean id="dataGetAndAnalyzeController" class="com.sync.control.DataGetAndAnalyzeController"/>
 
     <!--定时器详情-->
     <bean id="tableInfoSyncControllerJob"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
           p:targetObject-ref="tableInfoSyncController" p:targetMethod="run" p:concurrent="false"/>
-    <!--定时器详情-->
     <bean id="resourceTableInfoSyncControllerJob"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
           p:targetObject-ref="resourceTableInfoSyncController" p:targetMethod="run" p:concurrent="false"/>
+    <bean id="dataGetAndAnalyzeControllerJob"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+          p:targetObject-ref="dataGetAndAnalyzeController" p:targetMethod="run" p:concurrent="false"/>
+    <!--定时器详情-->
 
     <!-- 定义时间间隔触发器-->
     <bean id="tableInfoSyncControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
-          p:jobDetail-ref="tableInfoSyncControllerJob" p:cronExpression="0 22 10 * * ?"/>
-  <!-- 定义时间间隔触发器-->
+          p:jobDetail-ref="tableInfoSyncControllerJob" p:cronExpression="0 48 11 * * ?"/>
     <bean id="resourceTableInfoSyncControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
           p:jobDetail-ref="resourceTableInfoSyncControllerJob" p:cronExpression="0 46 14 * * ?"/>
+    <bean id="dataGetAndAnalyzeControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+          p:jobDetail-ref="dataGetAndAnalyzeControllerJob" p:cronExpression="0 22 18 * * ?"/>
+    <!-- 定义时间间隔触发器-->
 
     <!--启动定时器-->
     <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -31,6 +37,7 @@
             <list>
                 <ref bean="tableInfoSyncControllerTrigger"/>
                 <ref bean="resourceTableInfoSyncControllerTrigger"/>
+                <ref bean="dataGetAndAnalyzeControllerTrigger"/>
             </list>
         </property>
     </bean>

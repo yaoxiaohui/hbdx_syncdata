@@ -1,6 +1,7 @@
 package util;
 
 import com.google.gson.*;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -25,7 +26,14 @@ public class JsonUtil {
         }
     }
 
-    private JsonUtil() {
+    /***
+     * 将对象序列化为JSON文本
+     * @param object
+     * @return
+     */
+    public static String toJSONString(Object object) {
+        JSONArray jsonArray = JSONArray.fromObject(object);
+        return jsonArray.toString();
     }
 
     /**

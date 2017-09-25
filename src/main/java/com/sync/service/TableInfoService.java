@@ -21,4 +21,6 @@ public interface TableInfoService {
     void addData(List<Map<String, String>> mapList, String table, String fields);
 
     void addTagartTableData(List<WorkOrderBean> beanList);
+
+    void dataGetAndAnalyze();
 }
