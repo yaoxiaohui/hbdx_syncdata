@@ -203,6 +203,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             }
             conn.setAutoCommit(false);
             String sql = "insert into " + table + " (" + fields + ") values("+temp+")";
+            System.out.println(sql);
             ps = conn.prepareStatement(sql);
             for (int i = 0; i < mapList.size(); i++) {
                 Map<String, String> map = mapList.get(i);
