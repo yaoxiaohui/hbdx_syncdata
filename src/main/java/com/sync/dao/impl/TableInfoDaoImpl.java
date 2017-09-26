@@ -1,12 +1,9 @@
 package com.sync.dao.impl;
 
 import com.sync.dao.TableInfoDao;
-import com.sync.pojo.CategoryBean;
-import com.sync.pojo.CountResultBean;
-import com.sync.pojo.LogInfo;
-import com.sync.pojo.WorkOrderBean;
+import com.sync.pojo.*;
+import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
-import sun.rmi.server.InactiveGroupException;
 import util.*;
 
 import java.sql.*;
@@ -36,25 +33,149 @@ public class TableInfoDaoImpl implements TableInfoDao {
         String modelString = TextAnalyze.getModelStr(categoryBeans);
         //工单信息和相关表的信息
         List<WorkOrderBean> workOrderBeans = queryTableInfoWorkorder();
-        TextAnalyze.categoryAnalyze(modelString, workOrderBeans, categoryBeans);
+        int[][] resultArray = TextAnalyze.categoryAnalyze(modelString, workOrderBeans, categoryBeans);
+
+        Map<Integer, String> categoryMap = new HashMap<>();
+        for (int i = 0; i < categoryBeans.size(); i++) {
+            CategoryBean categoryBean = categoryBeans.get(i);
+            categoryMap.put(Integer.parseInt(categoryBean.getId()), categoryBean.getAlias());
+        }
+        //地区信息
+        Map<Integer, String> countyMap = queryTableInfoCounty();
         //统计的每个地区的工单条数
         Map<String, Integer> countMap = queryTableInfoCount();
 
-        //最后结果json
-        Map<String, Object> countResultMap = new HashMap<>();
-        Map<String, Map> countyCuntMapTemp = new HashMap<>();
-        Map<String, Object> countyCuntMap = new HashMap<>();
+        //各个市
+        JSONObject CZjsonObject = new JSONObject();
+        JSONObject TSjsonObject = new JSONObject();
+        JSONObject QHDjsonObject = new JSONObject();
+        JSONObject LFjsonObject = new JSONObject();
+        JSONObject ZJKjsonObject = new JSONObject();
+        JSONObject XTjsonObject = new JSONObject();
+        JSONObject HDjsonObject = new JSONObject();
+        JSONObject BDjsonObject = new JSONObject();
+        JSONObject SJZjsonObject = new JSONObject();
+        JSONObject CDjsonObject = new JSONObject();
+        JSONObject HSjsonObject = new JSONObject();
+        //市下的区县集合
+        JSONObject CZcountyJsonObjectTempArea = new JSONObject();
+        JSONObject TScountyJsonObjectTempArea = new JSONObject();
+        JSONObject QHDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject LFcountyJsonObjectTempArea = new JSONObject();
+        JSONObject ZJKcountyJsonObjectTempArea = new JSONObject();
+        JSONObject XTcountyJsonObjectTempArea = new JSONObject();
+        JSONObject HDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject BDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject SJZcountyJsonObjectTempArea = new JSONObject();
+        JSONObject CDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject HScountyJsonObjectTempArea = new JSONObject();
+        int CZCount = 0;
+        int TSCount = 0;
+        int QHDCount = 0;
+        int LFCount = 0;
+        int ZJKCount = 0;
+        int XTCount = 0;
+        int HDCount = 0;
+        int BDCount = 0;
+        int SJCount = 0;
+        int CDCount = 0;
+        int HSCount = 0;
+        int CZTELECOUNTCount = 0;
+        int TSTELECOUNTCount = 0;
+        int QHDTELECOUNTCount = 0;
+        int LFTELECOUNTCount = 0;
+        int ZJKTELECOUNTCount = 0;
+        int XTTELECOUNTCount = 0;
+        int HDTELECOUNTCount = 0;
+        int BDTELECOUNTCount = 0;
+        int SJTELECOUNTCount = 0;
+        int CDTELECOUNTCount = 0;
+        int HSTELECOUNTCount = 0;
+        for (int i = 0; i < resultArray.length; i++) {
+            //各个父分类
+            JSONObject XZjsonObject = new JSONObject();
+            JSONObject CFLHjsonObject = new JSONObject();
+            JSONObject JZjsonObject = new JSONObject();
+            JSONObject XFXYjsonObject = new JSONObject();
+            JSONObject HJHKHGXjsonObject = new JSONObject();
+            JSONObject TCQYjsonObject = new JSONObject();
+            JSONObject XSHDjsonObject = new JSONObject();
+            JSONObject WTWJjsonObject = new JSONObject();
+            //各个父分类 统计
+            JSONObject XZjsonObjectCount = new JSONObject();
+            JSONObject CFLHjsonObjectCount = new JSONObject();
+            JSONObject JZjsonObjectCount = new JSONObject();
+            JSONObject XFXYjsonObjectCount = new JSONObject();
+            JSONObject HJHKHGXjsonObjectCount = new JSONObject();
+            JSONObject TCQYjsonObjectCount = new JSONObject();
+            JSONObject XSHDjsonObjectCount = new JSONObject();
+            JSONObject WTWJjsonObjectCount = new JSONObject();
+            //各个子分类
+            JSONObject SONXZjsonObject = new JSONObject();
+            JSONObject SONCFLHjsonObject = new JSONObject();
+            JSONObject SONJZjsonObject = new JSONObject();
+            JSONObject SONXFXYjsonObject = new JSONObject();
+            JSONObject SONHJHKHGXjsonObject = new JSONObject();
+            JSONObject SONTCQYjsonObject = new JSONObject();
+            JSONObject SONXSHDjsonObject = new JSONObject();
+            JSONObject SONWTWJjsonObject = new JSONObject();
+            //各个分类数量统计
+            int XZcategoryCount = 0;
+            int CFcategoryCount = 0;
+            int JZcategoryCount = 0;
+            int XFXYcategoryCount = 0;
+            int HJHKHGXcategoryCount = 0;
+            int TCQYcategoryCount = 0;
+            int XSHDcategoryCount = 0;
+            int WTWJcategoryCount = 0;
+            for (int j = 0; j < resultArray[i].length; j++) {
+                if(categoryMap.get(j) != null && categoryMap.get(j).contains("XZ-")){
+                    SONXZjsonObject.put(categoryMap.get(j), resultArray[i][j]);
+                    XZcategoryCount = XZcategoryCount + resultArray[i][j];
+                }
+            }
+            XZjsonObjectCount.put("SON", SONXZjsonObject);
+            XZjsonObjectCount.put("COUNT", XZcategoryCount);
+            XZjsonObject.put("XZ", XZjsonObjectCount);
+
+            //区县的统计结构
+            JSONObject countyJsonObject = new JSONObject();
+            JSONObject countyJsonObjectTemp = new JSONObject();
+
+            int countTemp = XZcategoryCount+CFcategoryCount+JZcategoryCount
+                    +XFXYcategoryCount+HJHKHGXcategoryCount+TCQYcategoryCount+XSHDcategoryCount+WTWJcategoryCount;
+            countyJsonObjectTemp.put("COUNT", countTemp);
+            countyJsonObject.put("TELECOUNT", countMap.get(countyMap.get(i)));
+            countyJsonObject.put("CATEGORY", XZjsonObject);
+
+            if(countyMap.get(i) != null && countyMap.get(i).contains("CZ-")){
+                CZcountyJsonObjectTempArea.put(countyMap.get(i), countyJsonObject);
+                CZCount = CZCount + countTemp;
+                CZTELECOUNTCount = CZTELECOUNTCount + countMap.get(countyMap.get(i));
+
+            }
+        }
+        CZjsonObject.put("COUNT", CZCount);
+        CZjsonObject.put("TELECOUNT", CZTELECOUNTCount);
+        CZjsonObject.put("COUNTY", CZcountyJsonObjectTempArea);
 
 
-
-
-
-        List<CountResultBean> beanList = new ArrayList<>();
-
+        //插入分析结果 向countresult表
         CountResultBean countResultBean = new CountResultBean();
-//        countResultBean.setSJZ();
-
-
+        countResultBean.setSJZ(SJZjsonObject != null ? SJZjsonObject.toString() : null);
+        countResultBean.setBD(BDjsonObject != null ? BDjsonObject.toString() : null);
+        countResultBean.setCD(CDjsonObject != null ? CDjsonObject.toString() : null);
+        countResultBean.setCZ(CZjsonObject != null ? CZjsonObject.toString() : null);
+        countResultBean.setHD(HDjsonObject != null ? HDjsonObject.toString() : null);
+        countResultBean.setHS(HSjsonObject != null ? HSjsonObject.toString() : null);
+        countResultBean.setLF(LFjsonObject != null ? LFjsonObject.toString() : null);
+        countResultBean.setQHD(QHDjsonObject != null ? QHDjsonObject.toString() : null);
+        countResultBean.setTS(TSjsonObject != null ? TSjsonObject.toString() : null);
+        countResultBean.setZJK(ZJKjsonObject != null ? ZJKjsonObject.toString() : null);
+        countResultBean.setXT(XTjsonObject != null ? XTjsonObject.toString() : null);
+        addCountresult(countResultBean);
+        //更新工单表 插入分析结果
+        updateWorkorder(workOrderBeans);
     }
 
     /**
@@ -102,7 +223,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "SELECT * FROM category WHERE roleWord IS NOT NULL";
+        String sql = "SELECT * FROM category WHERE roleWord IS NOT NULL AND level=2";
         try {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -120,6 +241,29 @@ public class TableInfoDaoImpl implements TableInfoDao {
             dbConnection.close(ps, rs, null, conn);
         }
         return beanList;
+    }
+
+    /**
+     * 查询数据(地区表county)
+     */
+    public Map<Integer, String> queryTableInfoCounty() {
+        Map<Integer, String> map = new HashMap<>();
+        Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM county WHERE level = 2";
+        try {
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                map.put(Integer.parseInt(rs.getObject("id").toString()), String.valueOf(rs.getObject("alias")));
+            }
+        } catch (SQLException e) {
+            log.error("TableInfoDaoImpl.queryTableInfoCounty() >>>>>>", e);
+        } finally {
+            dbConnection.close(ps, rs, null, conn);
+        }
+        return map;
     }
 
     /**
@@ -273,38 +417,32 @@ public class TableInfoDaoImpl implements TableInfoDao {
 
     /**
      * 添加到统计结果表
-     * @param beanList
+     * @param countResultBean
      */
-    public void addCountresult(List<CountResultBean> beanList) {
+    public void addCountresult(CountResultBean countResultBean) {
 
         PreparedStatement ps = null;
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         try {
-            conn.setAutoCommit(false);
+//          conn.setAutoCommit(false);
             String sql = "insert into countresult(date,SJZ,BD, HD, CZ, XT, ZJK,TS, LF, CD, HS, QHD) values(?,?,?,?,?,?,?,?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
-            for (int i = 0; i < beanList.size(); i++) {
-                CountResultBean countResultBean = beanList.get(i);
-                ps.setObject(1, TimestampTool.getCurDate());
-                ps.setString(2, countResultBean.getSJZ());
-                ps.setString(3, countResultBean.getBD());
-                ps.setString(4, countResultBean.getHD());
-                ps.setString(5, countResultBean.getCZ());
-                ps.setString(6, countResultBean.getXT());
-                ps.setString(7, countResultBean.getZJK());
-                ps.setString(8, countResultBean.getTS());
-                ps.setString(9, countResultBean.getLF());
-                ps.setString(10, countResultBean.getCD());
-                ps.setString(11, countResultBean.getHS());
-                ps.setString(12, countResultBean.getQHD());
-                ps.addBatch();
-                if((i != 0 && i%1000 == 0) || i == beanList.size()-1){
-                    ps.executeBatch();
-                    conn.commit();
-                    ps.clearBatch();
-                }
-            }
+            ps.setObject(1, TimestampTool.getCurDate());
+            ps.setString(2, countResultBean.getSJZ());
+            ps.setString(3, countResultBean.getBD());
+            ps.setString(4, countResultBean.getHD());
+            ps.setString(5, countResultBean.getCZ());
+            ps.setString(6, countResultBean.getXT());
+            ps.setString(7, countResultBean.getZJK());
+            ps.setString(8, countResultBean.getTS());
+            ps.setString(9, countResultBean.getLF());
+            ps.setString(10, countResultBean.getCD());
+            ps.setString(11, countResultBean.getHS());
+            ps.setString(12, countResultBean.getQHD());
+//          ps.addBatch();
+//          ps.executeBatch();
+            conn.commit();
 
         } catch (SQLException e) {
             log.error("TableInfoDaoImpl.addCountresult() >>>>>>", e);
@@ -330,7 +468,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
                 ps.setString(1, workOrderBean.getKeyword());
                 ps.setInt(2, Integer.parseInt(workOrderBean.getEmotion()));
                 ps.setString(3, workOrderBean.getMatchCategory());
-                ps.setInt(4, Integer.parseInt(workOrderBean.getIsAnalyze()));
+                ps.setInt(4, 1);//是否分析(0:未分析,1.分析)
                 ps.setInt(5, Integer.parseInt(workOrderBean.getId()));
              ps.addBatch();
                 if((i != 0 && i%1000 == 0) || i == beanList.size()-1){
@@ -342,13 +480,6 @@ public class TableInfoDaoImpl implements TableInfoDao {
 
         } catch (SQLException e) {
             log.error("TableInfoDaoImpl.updateWorkorder() >>>>>>", e);
-           /* //把数据插入日志表
-            String jsonStr = JsonUtil.objectToJson(mapList);
-            LogInfoDaoImpl logInfoDao = new LogInfoDaoImpl();
-            LogInfo logInfo = new LogInfo();
-            logInfo.setContent(jsonStr);
-            logInfoDao.addData(logInfo);
-            log.error("TableInfoDaoImpl.addData() >>>>>>", e);*/
         } finally {
             dbConnection.close(ps, null, null, conn);
         }
