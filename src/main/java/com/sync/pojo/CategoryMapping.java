@@ -1,6 +1,7 @@
 package com.sync.pojo;
 
 import lombok.NonNull;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class CategoryMapping {
     // 如1,融合新装,1,2,XZ-RHXZ，信息如<"融合新装","1,融合新装,1,2,XZ-RHXZ">
     private static final Map<String, String> nameInfoMap = new HashMap<String, String>();
 
-    static{
+    static {
         infoList.add("1,融合新装,1,2,XZ-RHXZ");
         infoList.add("2,单宽新装,1,2,XZ-DKXZ");
         infoList.add("3,单C新装,1,2,XZ-DCXZ");
@@ -52,7 +53,7 @@ public class CategoryMapping {
         for (String loopinfo : infoList) {
             infoArr = loopinfo.split(",");
             indexInfoMap.put(infoArr[0], loopinfo);
-            nameInfoMap.put(infoArr[1], loopinfo);
+            nameInfoMap.put(infoArr[4], loopinfo);
         }
     }
 
@@ -61,13 +62,16 @@ public class CategoryMapping {
 
     /**
      * 给定业务name，返回业务索引
-     * 如数据"1,融合新装,1,2,XZ-RHXZ"，给定融合新装，返回1
+     * 如数据"1,融合新装,1,2,XZ-RHXZ"，给定XZ-RHXZ，返回1
      *
-     * @param name 业务名称
+     * @param alias 业务别名
      * @return
      */
-    public static Integer getIndexByGivenName(@NonNull String name){
-        String info = nameInfoMap.get(name);
+    public static Integer getIndexByGivenAlias(@NonNull String alias) {
+        String info = nameInfoMap.get(alias);
+        if (StringUtils.isEmpty(info)) {
+            return -1;
+        }
         String[] infoArr = info.split(",");
         return Integer.valueOf(infoArr[0]);
     }
@@ -79,8 +83,11 @@ public class CategoryMapping {
      * @param index 索引
      * @return
      */
-    public static String getNameByGivenIndex(@NonNull String index){
+    public static String getNameByGivenIndex(@NonNull String index) {
         String info = indexInfoMap.get(index);
+        if (StringUtils.isEmpty(info)) {
+            return "";
+        }
         String[] infoArr = info.split(",");
         return infoArr[1];
     }
@@ -88,29 +95,20 @@ public class CategoryMapping {
     /**
      * 给定业务index，返回业务alias
      * 如数据"1,融合新装,1,2,XZ-RHXZ"，给定1，XZ-RHXZ
+     *
      * @param index 索引
      * @return
      */
-    public static String getAliasByGivenIndex(@NonNull String index){
+    public static String getAliasByGivenIndex(@NonNull String index) {
         String info = indexInfoMap.get(index);
+        if (StringUtils.isEmpty(info)) {
+            return "";
+        }
         String[] infoArr = info.split(",");
         return infoArr[4];
     }
 
-    /**
-     * 给定业务name，返回业务alias
-     * 如数据"1,融合新装,1,2,XZ-RHXZ"，给定1，返回XZ-RHXZ
-     *
-     * @param name 业务名称
-     * @return
-     */
-    public static String getAliasByGivenName(@NonNull String name){
-        String info = nameInfoMap.get(name);
-        String[] infoArr = info.split(",");
-        return infoArr[4];
-    }
-
-    public static Integer getNumOfCategory(){
+    public static Integer getNumOfCategory() {
         return infoList.size();
     }
 
