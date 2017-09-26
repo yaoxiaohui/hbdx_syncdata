@@ -56,10 +56,14 @@ public class TextAnalyze {
             String content = workOrderBean.getTextContent();
             // 获取地区index
             countyIndex = CountyMapping.getIndexByGivenCode(workOrderBean.getCid());
-            String result = sc.run("", content);
+            String result = sc.run("title", content);
             log.info("result>>>>>>" + result);
             keyword_sb.delete(0, keyword_sb.length());
             JSONObject resp_jo = new JSONObject(result);
+            Object resultTemp = resp_jo.get("result");
+            if(resultTemp == null || "".equals(resultTemp)){
+                continue;
+            }
             JSONArray result_ja = resp_jo.getJSONArray("result");
             JSONObject eachresult_jo;
             eachWorkOrderMatchCategroy = new JSONObject();
