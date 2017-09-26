@@ -38,7 +38,7 @@ public class TextAnalyze {
     /**
      * 标签分析
      */
-    public static Map<String, Object> categoryAnalyze(String modelString, List<WorkOrderBean> workOrderBeans, List<CategoryBean> categoryBeans) {
+    public static int[][] categoryAnalyze(String modelString, List<WorkOrderBean> workOrderBeans, List<CategoryBean> categoryBeans) {
 
         for (int i = 0; i < workOrderBeans.size() ; i++) {
 
