@@ -60,11 +60,10 @@ public class TextAnalyze {
             log.info("result>>>>>>" + result);
             keyword_sb.delete(0, keyword_sb.length());
             JSONObject resp_jo = new JSONObject(result);
-            Object resultTemp = resp_jo.get("result");
-            if(resultTemp == null || "".equals(resultTemp)){
+            JSONArray result_ja = resp_jo.getJSONArray("result");
+            if(result_ja == null || result_ja.isEmpty()){
                 continue;
             }
-            JSONArray result_ja = resp_jo.getJSONArray("result");
             JSONObject eachresult_jo;
             eachWorkOrderMatchCategroy = new JSONObject();
             for (int j = 0; j < result_ja.length(); j++) {

@@ -138,7 +138,29 @@ public class TableInfoDaoImpl implements TableInfoDao {
                 if(categorCode != null && categorCode.contains("XZ-")){
                     SONXZjsonObject.put(categorCode, resultArray[i][j]);
                     XZcategoryCount = XZcategoryCount + resultArray[i][j];
+                }else if(categorCode != null && categorCode.contains("CFLH-")){
+                    SONCFLHjsonObject.put(categorCode, resultArray[i][j]);
+                    CFcategoryCount = CFcategoryCount + resultArray[i][j];
+                }else if(categorCode != null && categorCode.contains("JZ-")){
+                    SONJZjsonObject.put(categorCode, resultArray[i][j]);
+                    JZcategoryCount = JZcategoryCount + resultArray[i][j];
+                }else if(categorCode != null && categorCode.contains("XFXY-")){
+                    SONXFXYjsonObject.put(categorCode, resultArray[i][j]);
+                    XFXYcategoryCount = XFXYcategoryCount + resultArray[i][j];
+                }else if(categorCode != null && categorCode.contains("HJHKHGX-")){
+                    SONHJHKHGXjsonObject.put(categorCode, resultArray[i][j]);
+                    HJHKHGXcategoryCount = HJHKHGXcategoryCount + resultArray[i][j];
+                }else if(categorCode != null && categorCode.contains("TCQY-")){
+                    SONTCQYjsonObject.put(categorCode, resultArray[i][j]);
+                    TCQYcategoryCount = TCQYcategoryCount + resultArray[i][j];
+                }else if(categorCode != null && categorCode.contains("XSHD-")){
+                    SONXSHDjsonObject.put(categorCode, resultArray[i][j]);
+                    XSHDcategoryCount = XSHDcategoryCount + resultArray[i][j];
+                }else if(categorCode != null && categorCode.contains("WTWJ-")){
+                    SONWTWJjsonObject.put(categorCode, resultArray[i][j]);
+                    WTWJcategoryCount = WTWJcategoryCount + resultArray[i][j];
                 }
+
             }
             XZjsonObjectCount.put("SON", SONXZjsonObject);
             XZjsonObjectCount.put("COUNT", XZcategoryCount);
