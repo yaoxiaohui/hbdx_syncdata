@@ -8,6 +8,7 @@ import com.zhxg.gdjl.ModelCluster;
 import lombok.extern.java.Log;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class TextAnalyze {
      */
     public static int[][] categoryAnalyze(String modelString, List<WorkOrderBean> workOrderBeans, List<CategoryBean> categoryBeans) {
 
-        int[][] arr = new int[CountyMapping.getNumOfCounty() + 1][categoryBeans.size() + 1];
+        int[][] tagAnalysisArr = new int[CountyMapping.getNumOfCounty() + 1][CategoryMapping.getNumOfCategory() + 1];
         StartClass sc = new StartClass(modelString);
         Integer countyIndex;
         Integer categoryIndex;
@@ -60,20 +61,23 @@ public class TextAnalyze {
             log.info("result>>>>>>" + result);
             keyword_sb.delete(0, keyword_sb.length());
             JSONObject resp_jo = new JSONObject(result);
-            Object resultTemp = resp_jo.get("result");
-            if(resultTemp == null || "".equals(resultTemp)){
+            if(StringUtils.isEmpty(resp_jo)){
                 continue;
             }
+            Object resultTemp = resp_jo.get("result");
             JSONArray result_ja = resp_jo.getJSONArray("result");
+            if(StringUtils.isEmpty(resultTemp) || result_ja.isEmpty()){
+                continue;
+            }
             JSONObject eachresult_jo;
             eachWorkOrderMatchCategroy = new JSONObject();
             for (int j = 0; j < result_ja.length(); j++) {
                 eachresult_jo = (JSONObject) result_ja.get(j);
                 // 取业务所属类目index
-                categoryIndex = CategoryMapping.getIndexByGivenName(eachresult_jo.get("tagclassly").toString());
-                categoryAlias = CategoryMapping.getAliasByGivenName(eachresult_jo.get("tagclassly").toString());
+                categoryIndex = CategoryMapping.getIndexByGivenAlias(eachresult_jo.get("tagclassly").toString());
+                categoryAlias = eachresult_jo.get("tagclassly").toString();
                 // 对应地区和业务的变量增1
-                ++arr[countyIndex][categoryIndex];
+                ++tagAnalysisArr[countyIndex][categoryIndex];
 
                 keyword_sb.append(eachresult_jo.get("words").toString());
                 if (j != result_ja.length() - 1) {
@@ -84,7 +88,7 @@ public class TextAnalyze {
             workOrderBean.setKeyword(keyword_sb.toString());
             workOrderBean.setMatchCategory(eachWorkOrderMatchCategroy.toString());
         }
-        return arr;
+        return tagAnalysisArr;
     }
 
     /**
