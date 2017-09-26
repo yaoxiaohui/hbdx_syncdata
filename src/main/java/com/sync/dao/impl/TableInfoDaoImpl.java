@@ -283,9 +283,9 @@ public class TableInfoDaoImpl implements TableInfoDao {
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "SELECT w.id, wc.content_a, wc.content_q, c.alias, c.id cid FROM ((workordercontent wc LEFT JOIN workorder w ON w.id = wc.workOrderId)" +
-                "LEFT JOIN t_c_users tcu ON w.phoneNum = tcu.DEVICE_NUMBER)" +
-                "LEFT JOIN county c ON tcu.CITY_NO = c.id";
+        String sql = "SELECT w.id, wc.content_a, wc.content_q, c.alias, c.id cid FROM ((workordercontent wc " +
+                "JOIN workorder w ON w.id = wc.workOrderId AND wc.content_a IS NOT NULL) " +
+                "JOIN t_c_users tcu ON w.phoneNum = tcu.DEVICE_NUMBER) JOIN county c ON tcu.CITY_NO = c.id AND c.alias IS NOT NULL";
         try {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
