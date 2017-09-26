@@ -2,43 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.1.xsd">
 
-    <!--定时加载的目标类-->
-    <bean id="tableInfoSyncController" class="com.sync.control.TargetTableInfoSyncController"/>
-    <bean id="resourceTableInfoSyncController" class="com.sync.control.ResourceTableInfoSyncController"/>
-    <bean id="dataGetAndAnalyzeController" class="com.sync.control.DataGetAndAnalyzeController"/>
-
-    <!--定时器详情-->
-    <bean id="tableInfoSyncControllerJob"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-          p:targetObject-ref="tableInfoSyncController" p:targetMethod="run" p:concurrent="false"/>
-    <bean id="resourceTableInfoSyncControllerJob"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-          p:targetObject-ref="resourceTableInfoSyncController" p:targetMethod="run" p:concurrent="false"/>
-    <bean id="dataGetAndAnalyzeControllerJob"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-          p:targetObject-ref="dataGetAndAnalyzeController" p:targetMethod="run" p:concurrent="false"/>
-    <!--定时器详情-->
-
-    <!-- 定义时间间隔触发器-->
-    <bean id="tableInfoSyncControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
-          p:jobDetail-ref="tableInfoSyncControllerJob" p:cronExpression="0 48 11 * * ?"/>
-    <bean id="resourceTableInfoSyncControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
-          p:jobDetail-ref="resourceTableInfoSyncControllerJob" p:cronExpression="0 46 14 * * ?"/>
-    <bean id="dataGetAndAnalyzeControllerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
-          p:jobDetail-ref="dataGetAndAnalyzeControllerJob" p:cronExpression="0 22 18 * * ?"/>
-    <!-- 定义时间间隔触发器-->
-
-    <!--启动定时器-->
-    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
-        <property name="triggers">
-            <list>
-                <ref bean="tableInfoSyncControllerTrigger"/>
-                <ref bean="resourceTableInfoSyncControllerTrigger"/>
-                <ref bean="dataGetAndAnalyzeControllerTrigger"/>
-            </list>
-        </property>
-    </bean>
+    <task:annotation-driven scheduler="myScheduler"/>
+    <task:scheduler id="myScheduler" pool-size="5"/>
 </beans>

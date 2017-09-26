@@ -86,6 +86,18 @@ public class CategoryMapping {
     }
 
     /**
+     * 给定业务index，返回业务alias
+     * 如数据"1,融合新装,1,2,XZ-RHXZ"，给定1，XZ-RHXZ
+     * @param index 索引
+     * @return
+     */
+    public static String getAliasByGivenIndex(@NonNull String index){
+        String info = indexInfoMap.get(index);
+        String[] infoArr = info.split(",");
+        return infoArr[4];
+    }
+
+    /**
      * 给定业务name，返回业务alias
      * 如数据"1,融合新装,1,2,XZ-RHXZ"，给定1，返回XZ-RHXZ
      *

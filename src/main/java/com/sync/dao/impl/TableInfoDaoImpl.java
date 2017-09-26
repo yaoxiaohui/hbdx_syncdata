@@ -24,6 +24,11 @@ public class TableInfoDaoImpl implements TableInfoDao {
 
     DBConnection dbConnection = DBConnection.getInstance();
 
+    public static void main(String[] args) {
+        TableInfoDaoImpl tableInfoDao = new TableInfoDaoImpl();
+        tableInfoDao.dataGetAndAnalyze();
+    }
+
     /**
      * 取出分析数据并入库
      */
@@ -35,13 +40,13 @@ public class TableInfoDaoImpl implements TableInfoDao {
         List<WorkOrderBean> workOrderBeans = queryTableInfoWorkorder();
         int[][] resultArray = TextAnalyze.categoryAnalyze(modelString, workOrderBeans, categoryBeans);
 
-        Map<Integer, String> categoryMap = new HashMap<>();
+       /* Map<Integer, String> categoryMap = new HashMap<>();
         for (int i = 0; i < categoryBeans.size(); i++) {
             CategoryBean categoryBean = categoryBeans.get(i);
             categoryMap.put(Integer.parseInt(categoryBean.getId()), categoryBean.getAlias());
-        }
-        //地区信息
-        Map<Integer, String> countyMap = queryTableInfoCounty();
+        }*/
+       /* //地区信息
+        Map<Integer, String> countyMap = queryTableInfoCounty();*/
         //统计的每个地区的工单条数
         Map<String, Integer> countMap = queryTableInfoCount();
 
@@ -129,8 +134,9 @@ public class TableInfoDaoImpl implements TableInfoDao {
             int XSHDcategoryCount = 0;
             int WTWJcategoryCount = 0;
             for (int j = 0; j < resultArray[i].length; j++) {
-                if(categoryMap.get(j) != null && categoryMap.get(j).contains("XZ-")){
-                    SONXZjsonObject.put(categoryMap.get(j), resultArray[i][j]);
+                String categorCode = CategoryMapping.getAliasByGivenIndex(String.valueOf(j));
+                if(categorCode != null && categorCode.contains("XZ-")){
+                    SONXZjsonObject.put(categorCode, resultArray[i][j]);
                     XZcategoryCount = XZcategoryCount + resultArray[i][j];
                 }
             }
@@ -142,16 +148,17 @@ public class TableInfoDaoImpl implements TableInfoDao {
             JSONObject countyJsonObject = new JSONObject();
             JSONObject countyJsonObjectTemp = new JSONObject();
 
+            String countyCode = CountyMapping.getCodeByGivenIndex(String.valueOf(i));
             int countTemp = XZcategoryCount+CFcategoryCount+JZcategoryCount
                     +XFXYcategoryCount+HJHKHGXcategoryCount+TCQYcategoryCount+XSHDcategoryCount+WTWJcategoryCount;
             countyJsonObjectTemp.put("COUNT", countTemp);
-            countyJsonObject.put("TELECOUNT", countMap.get(countyMap.get(i)));
+            countyJsonObject.put("TELECOUNT", countMap.get(countyCode));
             countyJsonObject.put("CATEGORY", XZjsonObject);
 
-            if(countyMap.get(i) != null && countyMap.get(i).contains("CZ-")){
-                CZcountyJsonObjectTempArea.put(countyMap.get(i), countyJsonObject);
+            if(countyCode != null && countyCode.contains("CZ-")){
+                CZcountyJsonObjectTempArea.put(countyCode, countyJsonObject);
                 CZCount = CZCount + countTemp;
-                CZTELECOUNTCount = CZTELECOUNTCount + countMap.get(countyMap.get(i));
+                CZTELECOUNTCount = CZTELECOUNTCount + countMap.get(countyCode);
 
             }
         }
