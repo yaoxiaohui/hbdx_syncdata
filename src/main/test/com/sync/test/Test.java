@@ -5,6 +5,7 @@ import com.sync.pojo.T_SR_SERVICEREQUEST;
 import com.sync.service.TableInfoService;
 import com.sync.service.impl.TableInfoServiceImpl;
 import com.zhxg.doc_classify.runstart.RunClass;
+import com.zhxg.doc_classify.runstart.StartClass;
 import net.sf.json.JSONObject;
 import sun.net.ftp.FtpClient;
 import sun.net.ftp.FtpProtocolException;
@@ -28,16 +29,15 @@ import java.util.Map;
 public class Test {
 
     public static void main(String[] sad) {
-        /*String modelString = "[{'name':'负面-政府负面-环保问题-水体污染','nice':'环保问题','keys':'变差 变黄 浑浊 异常 水域 河流 河水 湖水 海洋 地下水 自来水 污水 废水 脏水 臭水 红水 黄水 黑水 海域'}," +
-                "{'name':'负面-政府负面-腐败问题-霸占问题','nice':'腐败问题','keys':'路霸侵吞霸占霸市菜霸街霸警霸冒领退税款无端被强征暴力毁占疯狂抢占强占鱼池被无故因开挖提水站占用土地'}," +
-                "{'name':'负面-政府负面-民生问题-土地问题','nice':'民生问题','keys':'强制征地非法占用占用农田倒卖集体土地非法征地数量大'}]";
+        String modelString = "[{'keys':'手机加宽带 手机和电视绑定 宽带绑定 带宽带和电视 业务加起来 宽带和那个平板电视 手机宽带电视捆绑 捆绑的融合的业务 手机宽带绑定 电信宽带这个和手机那个绑定 赠这个宽带给这个电视 买手机赠红包 套餐比较合适 手机卡电视还有宽带','name':'融合新装','nice':'XZ-RHXZ'},{'keys':'装宽带 安宽带 现装宽带 4G宽带 宽带怎么装 装一下宽带 手机宽带和电视宽带捆绑 宽带网是电信的 装个宽带 办宽带 宽带是半年是多少钱 电信的那个宽带 新装一条宽带 宽带咋办 捆绑宽带 申请这个宽带 光纤的宽带 家里宽带 电视跟宽带套餐 一百兆带宽','name':'单宽新装','nice':'XZ-DKXZ'},{'keys':'机顶盒 猫和机顶盒 光猫 电信电视 加一个电视 办理电视和宽带 电信这个网络电视 宽带电视 加装一个IPTV','name':'单TV新装','nice':'XZ-DTVXZ'},{'keys':'退网 销卡 能不能销 退订 不想用 不想交钱 销这个号 退费 退了它 接受不了 销号 退机 号码销掉 自动放弃 不要了 销户 要退了 办亲情号','name':'中高危客户挽留','nice':'CFLH-ZGWHKWL'},{'keys':'流量包 天翼视讯 亲情号 腾讯的流量包 流量加油包 开通一下流量','name':'附属产品加包','nice':'JZ-FSCPJB'},{'keys':'到期 续约 返费 没有协议的','name':'租机续约','nice':'XFXY-ZJXY'},{'keys':'缴话费 交话费 交话费送话费 存多少送多少 缴费赠费 缴费赠流量 缴费赠易支付红包 参与活动缴费 缴200赠1G流量 缴200送1G流量 缴赠 缴200话费赠1G流量 预交话费赠流量 缴费就能赠流量 缴费赠送 交60块钱增60块钱话费 交费赠流量 免费获赠1G 存30赠30 存60增60 交50赠50 存30增的易支付红包 存30赠的易支付红包 直接赠 50话费赠50话费 交费赠易支付红包 缴话费 为什么没赠 交了100','name':'缴赠','nice':'XFXY-JF'},{'keys':'工信部 打官司 通管局 集团热线 315热线 网络曝光 起诉你们 监督电信服务 单位上边的部门 打120报案 投诉你们经理 省青年报反映 上传到网上 向上级 投诉 法律来维权','name':'越级倾向','nice':'WTWJ-YJQX'}]";
         //D:\\zhxg\\doc  表示日志输出位置  可以为空
-        String ds = RunClass.init(modelString, "D:\\zhxg\\doc");
-        System.out.println(">>>>>>>>"+ds);
-        String title = "去市场买菜时，如果老板蹲下去，一定要留心！赶紧看看吧！！";
-        String content = "原标题：去市场买菜时，如果老板蹲下去，一定要留心！赶紧看看吧！！" +
+        StartClass sc = new StartClass(modelString);
+//        String ds = RunClass.init(modelString, "D:\\zhxg\\doc");
+//        System.out.println(">>>>>>>>"+ds);
+//        String title = "去市场买菜时，如果老板蹲下去，一定要留心！赶紧看看吧！！";
+        String content = "流量包 原标题：去市场买菜时，流量包 如果老板蹲下去，一定要留心！赶紧看看吧！！" +
                 "看了这个视频  真的不能愉快的买菜了！  女商贩一分钟内  竟迅雷不及掩耳盗铃之势  调包了两袋鱼。  " +
-                "必是日积月累的实操  方能获此手法之娴熟！    视频没点开的不要紧  请看动图↓  " +
+                "必是日积月累的实操  方能获此手法之娴熟！流量包 流量包    视频没点开的不要紧  请看动图↓  " +
                 "第一次，小贩装菜的时候，拿到低处，拿另一袋掉了包    第二次，小贩索性扔掉鱼和袋子，" +
                 "直接拎起提前准备好的次品上台    止不住看了好几遍  被这“鬼手”彻底折服  卖菜卖成这样，" +
                 "也是成精了。  只是功夫用错了地方，欺骗消费者的事情可不能干！  注意了，买菜时留点心，" +
@@ -45,10 +45,11 @@ public class Test {
                 "beginimghttp://5b0988e595225.cdn.sohucs.com/images/20170905/23" +
                 "312f73208e4c4185d082e4f932ccd7.gifendimg beginimghttp://5b0988e595225.cdn.sohucs.c" +
                 "om/images/20170905/54511cf2df3645389d34e5961c915074.gifendimg ";
-        String result = RunClass.run(title, content);
-        System.out.println("result>>>>>>"+result);*/
+//        String result = RunClass.run(title, content);
+        String result = sc.run("title", content);
+        System.out.println("result>>>>>>"+result);
 
-        /*String modelString = "[{\"keys\":\"手机加宽带 手机和电视绑定 宽带绑定 带宽带和电视 业务加起来 宽带和那个平板电视 手机宽带电视捆绑 捆绑的融合的业务 手机宽带绑定 电信宽带这个和手机那个绑定 赠这个宽带给这个电视 买手机赠红包 套餐比较合适 手机卡电视还有宽带\",\"name\":\"融合新装\",\"nice\":\"XZ-RHXZ\"},{\"keys\":\"装宽带 安宽带 现装宽带 4G宽带 宽带怎么装 装一下宽带 手机宽带和电视宽带捆绑 宽带网是电信的 装个宽带 办宽带 宽带是半年是多少钱 电信的那个宽带 新装一条宽带 宽带咋办 捆绑宽带 申请这个宽带 光纤的宽带 家里宽带 电视跟宽带套餐 一百兆带宽\",\"name\":\"单宽新装\",\"nice\":\"XZ-DKXZ\"},{\"keys\":\"机顶盒 猫和机顶盒 光猫 电信电视 加一个电视 办理电视和宽带 电信这个网络电视 宽带电视 加装一个IPTV\",\"name\":\"单TV新装\",\"nice\":\"XZ-DTVXZ\"},{\"keys\":\"退网 销卡 能不能销 退订 不想用 不想交钱 销这个号 退费 退了它 接受不了 销号 退机 号码销掉 自动放弃 不要了 销户 要退了 办亲情号\",\"name\":\"中高危客户挽留\",\"nice\":\"CFLH-ZGWHKWL\"},{\"keys\":\"流量包 天翼视讯 亲情号 腾讯的流量包 流量加油包 开通一下流量\",\"name\":\"附属产品加包\",\"nice\":\"JZ-FSCPJB\"},{\"keys\":\"到期 续约 返费 没有协议的\",\"name\":\"租机续约\",\"nice\":\"XFXY-ZJXY\"},{\"keys\":\"缴话费 交话费 交话费送话费 存多少送多少 缴费赠费 缴费赠流量 缴费赠易支付红包 参与活动缴费 缴200赠1G流量 缴200送1G流量 缴赠 缴200话费赠1G流量 预交话费赠流量 缴费就能赠流量 缴费赠送 交60块钱增60块钱话费 交费赠流量 免费获赠1G 存30赠30 存60增60 交50赠50 存30增的易支付红包 存30赠的易支付红包 直接赠 50话费赠50话费 交费赠易支付红包 缴话费 为什么没赠 交了100\",\"name\":\"缴赠\",\"nice\":\"XFXY-JF\"},{\"keys\":\"工信部 打官司 通管局 集团热线 315热线 网络曝光 起诉你们 监督电信服务 单位上边的部门 打120报案 投诉你们经理 省青年报反映 上传到网上 向上级 投诉 法律来维权\",\"name\":\"越级倾向\",\"nice\":\"WTWJ-YJQX\"}]";
+        /*String modelString = "[{'keys':'手机加宽带 手机和电视绑定 宽带绑定 带宽带和电视 业务加起来 宽带和那个平板电视 手机宽带电视捆绑 捆绑的融合的业务 手机宽带绑定 电信宽带这个和手机那个绑定 赠这个宽带给这个电视 买手机赠红包 套餐比较合适 手机卡电视还有宽带','name':'融合新装','nice':'XZ-RHXZ'},{'keys':'装宽带 安宽带 现装宽带 4G宽带 宽带怎么装 装一下宽带 手机宽带和电视宽带捆绑 宽带网是电信的 装个宽带 办宽带 宽带是半年是多少钱 电信的那个宽带 新装一条宽带 宽带咋办 捆绑宽带 申请这个宽带 光纤的宽带 家里宽带 电视跟宽带套餐 一百兆带宽','name':'单宽新装','nice':'XZ-DKXZ'},{'keys':'机顶盒 猫和机顶盒 光猫 电信电视 加一个电视 办理电视和宽带 电信这个网络电视 宽带电视 加装一个IPTV','name':'单TV新装','nice':'XZ-DTVXZ'},{'keys':'退网 销卡 能不能销 退订 不想用 不想交钱 销这个号 退费 退了它 接受不了 销号 退机 号码销掉 自动放弃 不要了 销户 要退了 办亲情号','name':'中高危客户挽留','nice':'CFLH-ZGWHKWL'},{'keys':'流量包 天翼视讯 亲情号 腾讯的流量包 流量加油包 开通一下流量','name':'附属产品加包','nice':'JZ-FSCPJB'},{'keys':'到期 续约 返费 没有协议的','name':'租机续约','nice':'XFXY-ZJXY'},{'keys':'缴话费 交话费 交话费送话费 存多少送多少 缴费赠费 缴费赠流量 缴费赠易支付红包 参与活动缴费 缴200赠1G流量 缴200送1G流量 缴赠 缴200话费赠1G流量 预交话费赠流量 缴费就能赠流量 缴费赠送 交60块钱增60块钱话费 交费赠流量 免费获赠1G 存30赠30 存60增60 交50赠50 存30增的易支付红包 存30赠的易支付红包 直接赠 50话费赠50话费 交费赠易支付红包 缴话费 为什么没赠 交了100','name':'缴赠','nice':'XFXY-JF'},{'keys':'工信部 打官司 通管局 集团热线 315热线 网络曝光 起诉你们 监督电信服务 单位上边的部门 打120报案 投诉你们经理 省青年报反映 上传到网上 向上级 投诉 法律来维权','name':'越级倾向','nice':'WTWJ-YJQX'}]";
         //D:\\zhxg\\doc  表示日志输出位置  可以为空
         String ds = RunClass.init(modelString, "");
         System.out.println(">>>>>>>>"+ds);
@@ -115,15 +116,15 @@ public class Test {
         Runtime runtime = Runtime.getRuntime();
         //因为在命令窗口进行mysql数据库的导入一般分三步走，所以所执行的命令将以字符串数组的形式出现
         //根据属性文件的配置获取数据库导入所需的命令，组成一个数组
-//        String cmdarray[] = {"\"C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe\" -uroot -proot", "use hbdx",
-//                "load data infile \"D:\\TRECORDINFO-201709141530.txt\" replace into table TRECORDINFO9 fields terminated by'|';"};
-//        String cmdarray[] = {"\"C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe\" -uroot -proot", "use hbdx",
-//        "load data infile \"D:\\CONTACTDETAIL-201709151717.txt\" replace into table T_CCT_CONTACTDETAIL fields terminated by'|';"};
+//        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
+//                "load data infile 'D:\\TRECORDINFO-201709141530.txt' replace into table TRECORDINFO9 fields terminated by'|';"};
+//        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
+//        "load data infile 'D:\\CONTACTDETAIL-201709151717.txt' replace into table T_CCT_CONTACTDETAIL fields terminated by'|';"};
 
-//        String cmdarray[] = {"\"C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe\" -uroot -proot", "use hbdx",
-//                "load data infile \"D:\\SERVICEREQUEST-201709141500.txt\" replace into table T_SR_SERVICEREQUEST fields terminated by'|';"};
-        String cmdarray[] = {"\"C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe\" -uroot -proot", "use hbdx",
-                "load data infile \"D:\\SERVICEREQUEST-201709141500.txt\" replace into table t_c_users fields terminated by'|';"};
+//        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
+//                "load data infile 'D:\\SERVICEREQUEST-201709141500.txt' replace into table T_SR_SERVICEREQUEST fields terminated by'|';"};
+        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
+                "load data infile 'D:\\SERVICEREQUEST-201709141500.txt' replace into table t_c_users fields terminated by'|';"};
 
         Process process;
         try {
@@ -149,9 +150,9 @@ public class Test {
     /*public static void main(String[] args) {
         TableInfoService tableInfoService = new TableInfoServiceImpl();
         String[] tableNames = {"T_SR_SERVICEREQUEST", "T_CCT_CONTACTDETAIL", "TRECORDINFO9"};
-        String[] filePaths = {"D:\\"+ TimestampTool.getCurrentDate()+"\\SERVICEREQUEST.txt",
-                "D:\\"+ TimestampTool.getCurrentDate()+"\\CONTACTDETAIL.txt",
-                "D:\\"+ TimestampTool.getCurrentDate()+"\\TRECORDINFO.txt"};
+        String[] filePaths = {"D:\'+ TimestampTool.getCurrentDate()+"\\SERVICEREQUEST.txt",
+                "D:\'+ TimestampTool.getCurrentDate()+"\\CONTACTDETAIL.txt",
+                "D:\'+ TimestampTool.getCurrentDate()+"\\TRECORDINFO.txt"};
         String[][] tableFields = {T_SR_SERVICEREQUEST.TSRSERVICEREQUESTFeilds,
                 T_CCT_CONTACTDETAIL.TCCTCONTACTDETAILFeilds,
                 TRECORDINFO9.TRECORDINFO9Feilds};
