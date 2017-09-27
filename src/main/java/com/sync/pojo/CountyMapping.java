@@ -1,6 +1,7 @@
 package com.sync.pojo;
 
 import lombok.NonNull;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -212,8 +213,27 @@ public class CountyMapping {
      */
     public static String getCodeByGivenIndex(@NonNull String addrIndex){
         String info = indexInfoMap.get(addrIndex);
+        if (StringUtils.isEmpty(info)) {
+            return "";
+        }
         String[] infoArr = info.split(",");
         return infoArr[1];
+    }
+
+    /**
+     * 给定地区index，返回地区code
+     * 如数据"157,18720014,HS-ZQ"，给定157，返回18720014
+     *
+     * @param addrIndex 地区索引
+     * @return
+     */
+    public static String getAliasByGivenIndex(@NonNull String addrIndex){
+        String info = indexInfoMap.get(addrIndex);
+        if (StringUtils.isEmpty(info)) {
+            return "";
+        }
+        String[] infoArr = info.split(",");
+        return infoArr[2];
     }
 
     public static Integer getNumOfCounty(){

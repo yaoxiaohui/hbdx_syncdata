@@ -4,6 +4,7 @@ import com.sync.dao.TableInfoDao;
 import com.sync.pojo.*;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 import util.*;
 
 import java.sql.*;
@@ -30,27 +31,20 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * å–å‡ºåˆ†ææ•°æ®å¹¶å…¥åº“
+     * È¡³ö·ÖÎöÊı¾İ²¢Èë¿â
      */
     public void dataGetAndAnalyze() {
-        //æŸ¥è¯¢åˆ†ç±»ä¿¡æ¯
+        //²éÑ¯·ÖÀàĞÅÏ¢
         List<CategoryBean> categoryBeans = queryTableInfoCategory();
         String modelString = TextAnalyze.getModelStr(categoryBeans);
-        //å·¥å•ä¿¡æ¯å’Œç›¸å…³è¡¨çš„ä¿¡æ¯
+        //¹¤µ¥ĞÅÏ¢ºÍÏà¹Ø±íµÄĞÅÏ¢
         List<WorkOrderBean> workOrderBeans = queryTableInfoWorkorder();
         int[][] resultArray = TextAnalyze.categoryAnalyze(modelString, workOrderBeans, categoryBeans);
 
-       /* Map<Integer, String> categoryMap = new HashMap<>();
-        for (int i = 0; i < categoryBeans.size(); i++) {
-            CategoryBean categoryBean = categoryBeans.get(i);
-            categoryMap.put(Integer.parseInt(categoryBean.getId()), categoryBean.getAlias());
-        }*/
-       /* //åœ°åŒºä¿¡æ¯
-        Map<Integer, String> countyMap = queryTableInfoCounty();*/
-        //ç»Ÿè®¡çš„æ¯ä¸ªåœ°åŒºçš„å·¥å•æ¡æ•°
+        //Í³¼ÆµÄÃ¿¸öµØÇøµÄ¹¤µ¥ÌõÊı
         Map<String, Integer> countMap = queryTableInfoCount();
 
-        //å„ä¸ªå¸‚
+        //¸÷¸öÊĞ
         JSONObject CZjsonObject = new JSONObject();
         JSONObject TSjsonObject = new JSONObject();
         JSONObject QHDjsonObject = new JSONObject();
@@ -62,7 +56,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         JSONObject SJZjsonObject = new JSONObject();
         JSONObject CDjsonObject = new JSONObject();
         JSONObject HSjsonObject = new JSONObject();
-        //å¸‚ä¸‹çš„åŒºå¿é›†åˆ
+        //ÊĞÏÂµÄÇøÏØ¼¯ºÏ
         JSONObject CZcountyJsonObjectTempArea = new JSONObject();
         JSONObject TScountyJsonObjectTempArea = new JSONObject();
         JSONObject QHDcountyJsonObjectTempArea = new JSONObject();
@@ -82,7 +76,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         int XTCount = 0;
         int HDCount = 0;
         int BDCount = 0;
-        int SJCount = 0;
+        int SJZCount = 0;
         int CDCount = 0;
         int HSCount = 0;
         int CZTELECOUNTCount = 0;
@@ -93,20 +87,20 @@ public class TableInfoDaoImpl implements TableInfoDao {
         int XTTELECOUNTCount = 0;
         int HDTELECOUNTCount = 0;
         int BDTELECOUNTCount = 0;
-        int SJTELECOUNTCount = 0;
+        int SJZTELECOUNTCount = 0;
         int CDTELECOUNTCount = 0;
         int HSTELECOUNTCount = 0;
-        for (int i = 0; i < resultArray.length; i++) {
-            //å„ä¸ªçˆ¶åˆ†ç±»
-            JSONObject XZjsonObject = new JSONObject();
-            JSONObject CFLHjsonObject = new JSONObject();
-            JSONObject JZjsonObject = new JSONObject();
-            JSONObject XFXYjsonObject = new JSONObject();
-            JSONObject HJHKHGXjsonObject = new JSONObject();
-            JSONObject TCQYjsonObject = new JSONObject();
-            JSONObject XSHDjsonObject = new JSONObject();
-            JSONObject WTWJjsonObject = new JSONObject();
-            //å„ä¸ªçˆ¶åˆ†ç±» ç»Ÿè®¡
+        for (int i = 1; i < resultArray.length; i++) {
+            //¸÷¸ö¸¸·ÖÀà
+            JSONObject fatherJsonObject = new JSONObject();
+//            JSONObject CFLHjsonObject = new JSONObject();
+//            JSONObject JZjsonObject = new JSONObject();
+//            JSONObject XFXYjsonObject = new JSONObject();
+//            JSONObject HJHKHGXjsonObject = new JSONObject();
+//            JSONObject TCQYjsonObject = new JSONObject();
+//            JSONObject XSHDjsonObject = new JSONObject();
+//            JSONObject WTWJjsonObject = new JSONObject();
+            //¸÷¸ö¸¸·ÖÀà Í³¼Æ
             JSONObject XZjsonObjectCount = new JSONObject();
             JSONObject CFLHjsonObjectCount = new JSONObject();
             JSONObject JZjsonObjectCount = new JSONObject();
@@ -115,7 +109,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             JSONObject TCQYjsonObjectCount = new JSONObject();
             JSONObject XSHDjsonObjectCount = new JSONObject();
             JSONObject WTWJjsonObjectCount = new JSONObject();
-            //å„ä¸ªå­åˆ†ç±»
+            //¸÷¸ö×Ó·ÖÀà
             JSONObject SONXZjsonObject = new JSONObject();
             JSONObject SONCFLHjsonObject = new JSONObject();
             JSONObject SONJZjsonObject = new JSONObject();
@@ -124,7 +118,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             JSONObject SONTCQYjsonObject = new JSONObject();
             JSONObject SONXSHDjsonObject = new JSONObject();
             JSONObject SONWTWJjsonObject = new JSONObject();
-            //å„ä¸ªåˆ†ç±»æ•°é‡ç»Ÿè®¡
+            //¸÷¸ö·ÖÀàÊıÁ¿Í³¼Æ
             int XZcategoryCount = 0;
             int CFcategoryCount = 0;
             int JZcategoryCount = 0;
@@ -133,7 +127,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             int TCQYcategoryCount = 0;
             int XSHDcategoryCount = 0;
             int WTWJcategoryCount = 0;
-            for (int j = 0; j < resultArray[i].length; j++) {
+            for (int j = 1; j < resultArray[i].length; j++) {
                 String categorCode = CategoryMapping.getAliasByGivenIndex(String.valueOf(j));
                 if(categorCode != null && categorCode.contains("XZ-")){
                     SONXZjsonObject.put(categorCode, resultArray[i][j]);
@@ -162,34 +156,141 @@ public class TableInfoDaoImpl implements TableInfoDao {
                 }
 
             }
+
             XZjsonObjectCount.put("SON", SONXZjsonObject);
             XZjsonObjectCount.put("COUNT", XZcategoryCount);
-            XZjsonObject.put("XZ", XZjsonObjectCount);
+            fatherJsonObject.put("XZ", XZjsonObjectCount);
 
-            //åŒºå¿çš„ç»Ÿè®¡ç»“æ„
+            CFLHjsonObjectCount.put("SON", SONCFLHjsonObject);
+            CFLHjsonObjectCount.put("COUNT", CFcategoryCount);
+            fatherJsonObject.put("CFLH", CFLHjsonObjectCount);
+
+            JZjsonObjectCount.put("SON", SONJZjsonObject);
+            JZjsonObjectCount.put("COUNT", JZcategoryCount);
+            fatherJsonObject.put("JZ", JZjsonObjectCount);
+
+            XFXYjsonObjectCount.put("SON", SONXFXYjsonObject);
+            XFXYjsonObjectCount.put("COUNT", XFXYcategoryCount);
+            fatherJsonObject.put("XFXY", XFXYjsonObjectCount);
+
+            HJHKHGXjsonObjectCount.put("SON", SONHJHKHGXjsonObject);
+            HJHKHGXjsonObjectCount.put("COUNT", HJHKHGXcategoryCount);
+            fatherJsonObject.put("HJHKHGX", HJHKHGXjsonObjectCount);
+
+            TCQYjsonObjectCount.put("SON", SONTCQYjsonObject);
+            TCQYjsonObjectCount.put("COUNT", TCQYcategoryCount);
+            fatherJsonObject.put("TCQY", TCQYjsonObjectCount);
+
+            XSHDjsonObjectCount.put("SON", SONXSHDjsonObject);
+            XSHDjsonObjectCount.put("COUNT", XSHDcategoryCount);
+            fatherJsonObject.put("XSHD", XSHDjsonObjectCount);
+
+            WTWJjsonObjectCount.put("SON", SONWTWJjsonObject);
+            WTWJjsonObjectCount.put("COUNT", WTWJcategoryCount);
+            fatherJsonObject.put("WTWJ", WTWJjsonObjectCount);
+
+            //ÇøÏØµÄÍ³¼Æ½á¹¹
             JSONObject countyJsonObject = new JSONObject();
-            JSONObject countyJsonObjectTemp = new JSONObject();
 
-            String countyCode = CountyMapping.getCodeByGivenIndex(String.valueOf(i));
+            String countyAlias = CountyMapping.getAliasByGivenIndex(String.valueOf(i));
             int countTemp = XZcategoryCount+CFcategoryCount+JZcategoryCount
                     +XFXYcategoryCount+HJHKHGXcategoryCount+TCQYcategoryCount+XSHDcategoryCount+WTWJcategoryCount;
-            countyJsonObjectTemp.put("COUNT", countTemp);
-            countyJsonObject.put("TELECOUNT", countMap.get(countyCode));
-            countyJsonObject.put("CATEGORY", XZjsonObject);
+            countyJsonObject.put("COUNT", countTemp);
+            countyJsonObject.put("TELECOUNT", countMap.get(countyAlias));
+            countyJsonObject.put("CATEGORY", fatherJsonObject);
 
-            if(countyCode != null && countyCode.contains("CZ-")){
-                CZcountyJsonObjectTempArea.put(countyCode, countyJsonObject);
+            if(countyAlias != null && countyAlias.contains("CZ-")){
+                CZcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
                 CZCount = CZCount + countTemp;
-                CZTELECOUNTCount = CZTELECOUNTCount + countMap.get(countyCode);
-
+                CZTELECOUNTCount = CZTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("TS-")){
+                TScountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                TSCount = TSCount + countTemp;
+                TSTELECOUNTCount = TSTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("QHD-")){
+                QHDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                QHDCount = QHDCount + countTemp;
+                QHDTELECOUNTCount = QHDTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("LF-")){
+                LFcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                LFCount = LFCount + countTemp;
+                LFTELECOUNTCount = LFTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("ZJK-")){
+                ZJKcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                ZJKCount = ZJKCount + countTemp;
+                ZJKTELECOUNTCount = ZJKTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("XT-")){
+                XTcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                XTCount = XTCount + countTemp;
+                XTTELECOUNTCount = XTTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("HD-")){
+                HDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                HDCount = HDCount + countTemp;
+                HDTELECOUNTCount = HDTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("BD-")){
+                BDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                BDCount = BDCount + countTemp;
+                BDTELECOUNTCount = BDTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            } else if(countyAlias != null && countyAlias.contains("SJZ-")){
+                SJZcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                SJZCount = SJZCount + countTemp;
+                SJZTELECOUNTCount = SJZTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("CD-")){
+                CDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                CDCount = CDCount + countTemp;
+                CDTELECOUNTCount = CDTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
+            }else if(countyAlias != null && countyAlias.contains("HS-")){
+                HScountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+                HSCount = HSCount + countTemp;
+                HSTELECOUNTCount = HSTELECOUNTCount + (StringUtils.isEmpty(countMap.get(countyAlias))? 0 : countMap.get(countyAlias));
             }
+
         }
+        SJZjsonObject.put("COUNT", SJZCount);
+        SJZjsonObject.put("TELECOUNT", SJZTELECOUNTCount);
+        SJZjsonObject.put("COUNTY", SJZcountyJsonObjectTempArea);
+
+        BDjsonObject.put("COUNT", BDCount);
+        BDjsonObject.put("TELECOUNT", BDTELECOUNTCount);
+        BDjsonObject.put("COUNTY", BDcountyJsonObjectTempArea);
+
+        CDjsonObject.put("COUNT", CDCount);
+        CDjsonObject.put("TELECOUNT", CDTELECOUNTCount);
+        CDjsonObject.put("COUNTY", CDcountyJsonObjectTempArea);
+
         CZjsonObject.put("COUNT", CZCount);
         CZjsonObject.put("TELECOUNT", CZTELECOUNTCount);
         CZjsonObject.put("COUNTY", CZcountyJsonObjectTempArea);
 
+        HDjsonObject.put("COUNT", HDCount);
+        HDjsonObject.put("TELECOUNT", HDTELECOUNTCount);
+        HDjsonObject.put("COUNTY", HDcountyJsonObjectTempArea);
 
-        //æ’å…¥åˆ†æç»“æœ å‘countresultè¡¨
+        HSjsonObject.put("COUNT", HSCount);
+        HSjsonObject.put("TELECOUNT", HSTELECOUNTCount);
+        HSjsonObject.put("COUNTY", HScountyJsonObjectTempArea);
+
+        LFjsonObject.put("COUNT", LFCount);
+        LFjsonObject.put("TELECOUNT", LFTELECOUNTCount);
+        LFjsonObject.put("COUNTY", LFcountyJsonObjectTempArea);
+
+        QHDjsonObject.put("COUNT", QHDCount);
+        QHDjsonObject.put("TELECOUNT", QHDTELECOUNTCount);
+        QHDjsonObject.put("COUNTY", QHDcountyJsonObjectTempArea);
+
+        TSjsonObject.put("COUNT", TSCount);
+        TSjsonObject.put("TELECOUNT", TSTELECOUNTCount);
+        TSjsonObject.put("COUNTY", TScountyJsonObjectTempArea);
+
+        ZJKjsonObject.put("COUNT", ZJKCount);
+        ZJKjsonObject.put("TELECOUNT", ZJKTELECOUNTCount);
+        ZJKjsonObject.put("COUNTY", ZJKcountyJsonObjectTempArea);
+
+        XTjsonObject.put("COUNT", XTCount);
+        XTjsonObject.put("TELECOUNT", XTTELECOUNTCount);
+        XTjsonObject.put("COUNTY", XTcountyJsonObjectTempArea);
+
+        //²åÈë·ÖÎö½á¹û Ïòcountresult±í
         CountResultBean countResultBean = new CountResultBean();
         countResultBean.setSJZ(SJZjsonObject != null ? SJZjsonObject.toString() : null);
         countResultBean.setBD(BDjsonObject != null ? BDjsonObject.toString() : null);
@@ -203,12 +304,12 @@ public class TableInfoDaoImpl implements TableInfoDao {
         countResultBean.setZJK(ZJKjsonObject != null ? ZJKjsonObject.toString() : null);
         countResultBean.setXT(XTjsonObject != null ? XTjsonObject.toString() : null);
         addCountresult(countResultBean);
-        //æ›´æ–°å·¥å•è¡¨ æ’å…¥åˆ†æç»“æœ
-        updateWorkorder(workOrderBeans);
+        //¸üĞÂ¹¤µ¥±í ²åÈë·ÖÎö½á¹û
+//        updateWorkorder(workOrderBeans);
     }
 
     /**
-     * æŸ¥è¯¢æ•°æ®(åŸå§‹åº“è¡¨)(æ—§åŒæ­¥åˆ†ææ•°æ®æ–¹æ¡ˆæ‰€ä½¿ç”¨çš„æ–¹æ³•)
+     * ²éÑ¯Êı¾İ(Ô­Ê¼¿â±í)(¾ÉÍ¬²½·ÖÎöÊı¾İ·½°¸ËùÊ¹ÓÃµÄ·½·¨)
      */
     public List<WorkOrderBean> queryTableInfo() {
         List<WorkOrderBean> beanList = new ArrayList<WorkOrderBean>();
@@ -224,13 +325,13 @@ public class TableInfoDaoImpl implements TableInfoDao {
             rs = ps.executeQuery();
             while (rs.next()) {
                 WorkOrderBean workOrderBean = new WorkOrderBean();
-                workOrderBean.setSerialNum(String.valueOf(rs.getObject("CONTACTID")));//æµæ°´å·
-                workOrderBean.setCustomerServiceId(String.valueOf(rs.getObject("STAFFID")));//å—ç†å‘˜å·¥å·
-                workOrderBean.setCallTime(String.valueOf(rs.getObject("ACCEPTTIME")));//æ¥ç”µæ—¶é—´
-                workOrderBean.setPhoneNum(String.valueOf(rs.getObject("CALLERNO")));//æ¥ç”µå·ç 
-                workOrderBean.setSourceAudioPath(String.valueOf(rs.getObject("FILENAME")));//è¯­éŸ³è·¯å¾„(åä¸ºæ–¹åŒæ­¥è¿‡æ¥çš„)
-                workOrderBean.setAcceptLocation(String.valueOf(rs.getObject("ACCEPTCITY")));//å—ç†åœ°
-                workOrderBean.setPhoneLocation(String.valueOf(rs.getObject("SUBSCITY")));//æ¥ç”µå½’å±åœ°
+                workOrderBean.setSerialNum(String.valueOf(rs.getObject("CONTACTID")));//Á÷Ë®ºÅ
+                workOrderBean.setCustomerServiceId(String.valueOf(rs.getObject("STAFFID")));//ÊÜÀíÔ±¹¤ºÅ
+                workOrderBean.setCallTime(String.valueOf(rs.getObject("ACCEPTTIME")));//À´µçÊ±¼ä
+                workOrderBean.setPhoneNum(String.valueOf(rs.getObject("CALLERNO")));//À´µçºÅÂë
+                workOrderBean.setSourceAudioPath(String.valueOf(rs.getObject("FILENAME")));//ÓïÒôÂ·¾¶(»ªÎª·½Í¬²½¹ıÀ´µÄ)
+                workOrderBean.setAcceptLocation(String.valueOf(rs.getObject("ACCEPTCITY")));//ÊÜÀíµØ
+                workOrderBean.setPhoneLocation(String.valueOf(rs.getObject("SUBSCITY")));//À´µç¹éÊôµØ
                 beanList.add(workOrderBean);
             }
         } catch (SQLException e) {
@@ -243,7 +344,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
 
 
     /**
-     * æŸ¥è¯¢æ•°æ®(categoryåˆ†ç±»è¡¨)
+     * ²éÑ¯Êı¾İ(category·ÖÀà±í)
      */
     public List<CategoryBean> queryTableInfoCategory() {
 
@@ -273,7 +374,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * æŸ¥è¯¢æ•°æ®(åœ°åŒºè¡¨county)
+     * ²éÑ¯Êı¾İ(µØÇø±ícounty)
      */
     public Map<Integer, String> queryTableInfoCounty() {
         Map<Integer, String> map = new HashMap<>();
@@ -296,7 +397,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * æŸ¥è¯¢æ•°æ®(workorder å·¥å•è¡¨åŠç›¸å…³è”è¡¨)
+     * ²éÑ¯Êı¾İ(workorder ¹¤µ¥±í¼°Ïà¹ØÁª±í)
      */
     public List<WorkOrderBean> queryTableInfoWorkorder() {
 
@@ -328,7 +429,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * æŸ¥è¯¢æ•°æ®(workorder å·¥å•è¡¨åŠç›¸å…³è”è¡¨) ç»Ÿè®¡æ¯ä¸ªåœ°åŒºçš„å·¥å•æ•°é‡
+     * ²éÑ¯Êı¾İ(workorder ¹¤µ¥±í¼°Ïà¹ØÁª±í) Í³¼ÆÃ¿¸öµØÇøµÄ¹¤µ¥ÊıÁ¿
      */
     public Map<String, Integer> queryTableInfoCount() {
         Map<String, Integer> countMap = new HashMap<>();
@@ -360,7 +461,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         return countMap;
     }
     /**
-     * æ·»åŠ æ•°æ®(åŸå§‹è¡¨é‡Œæ·»åŠ æ•°æ®)
+     * Ìí¼ÓÊı¾İ(Ô­Ê¼±íÀïÌí¼ÓÊı¾İ)
      */
     public void addData(List<Map<String, String>> mapList, String table, String fields) {
         PreparedStatement ps = null;
@@ -388,7 +489,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             ps.executeBatch();
             conn.commit();
         } catch (SQLException e) {
-            //æŠŠæ•°æ®æ’å…¥æ—¥å¿—è¡¨
+            //°ÑÊı¾İ²åÈëÈÕÖ¾±í
             String jsonStr = JsonUtil.objectToJson(mapList);
             LogInfoDaoImpl logInfoDao = new LogInfoDaoImpl();
             LogInfo logInfo = new LogInfo();
@@ -401,7 +502,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * å·¥å•è¡¨ä¸­æ·»åŠ æ•°æ®(ä»å†…å­˜ä¸­å…³è”çš„åŒæ­¥å†™å®Œå°±ä¸ç”¨æ­¤æ–¹æ³•äº†)
+     * ¹¤µ¥±íÖĞÌí¼ÓÊı¾İ(´ÓÄÚ´æÖĞ¹ØÁªµÄÍ¬²½Ğ´Íê¾Í²»ÓÃ´Ë·½·¨ÁË)
      * @param beanList
      */
     @Override
@@ -445,7 +546,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * æ·»åŠ åˆ°ç»Ÿè®¡ç»“æœè¡¨
+     * Ìí¼Óµ½Í³¼Æ½á¹û±í
      * @param countResultBean
      */
     public void addCountresult(CountResultBean countResultBean) {
@@ -453,7 +554,6 @@ public class TableInfoDaoImpl implements TableInfoDao {
         PreparedStatement ps = null;
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         try {
-//          conn.setAutoCommit(false);
             String sql = "insert into countresult(date,SJZ,BD, HD, CZ, XT, ZJK,TS, LF, CD, HS, QHD) values(?,?,?,?,?,?,?,?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
 
@@ -469,9 +569,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             ps.setString(10, countResultBean.getCD());
             ps.setString(11, countResultBean.getHS());
             ps.setString(12, countResultBean.getQHD());
-//          ps.addBatch();
-//          ps.executeBatch();
-            conn.commit();
+            ps.execute();
 
         } catch (SQLException e) {
             log.error("TableInfoDaoImpl.addCountresult() >>>>>>", e);
@@ -481,7 +579,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * æ›´æ–°å·¥å•è¡¨ï¼Œæ’å…¥ç›¸åº”çš„åˆ†æå­—æ®µ
+     * ¸üĞÂ¹¤µ¥±í£¬²åÈëÏàÓ¦µÄ·ÖÎö×Ö¶Î
      * @param beanList
      */
     public void updateWorkorder(List<WorkOrderBean> beanList) {
@@ -495,11 +593,11 @@ public class TableInfoDaoImpl implements TableInfoDao {
             for (int i = 0; i < beanList.size(); i++) {
                 WorkOrderBean workOrderBean = beanList.get(i);
                 ps.setString(1, workOrderBean.getKeyword());
-                ps.setInt(2, Integer.parseInt(workOrderBean.getEmotion()));
+                ps.setInt(2, Integer.parseInt(StringUtils.isEmpty(workOrderBean.getEmotion()) ? "0" : workOrderBean.getEmotion()));
                 ps.setString(3, workOrderBean.getMatchCategory());
-                ps.setInt(4, 1);//æ˜¯å¦åˆ†æ(0:æœªåˆ†æ,1.åˆ†æ)
+                ps.setInt(4, 1);//ÊÇ·ñ·ÖÎö(0:Î´·ÖÎö,1.·ÖÎö)
                 ps.setInt(5, Integer.parseInt(workOrderBean.getId()));
-             ps.addBatch();
+                ps.addBatch();
                 if((i != 0 && i%1000 == 0) || i == beanList.size()-1){
                     ps.executeBatch();
                     conn.commit();
