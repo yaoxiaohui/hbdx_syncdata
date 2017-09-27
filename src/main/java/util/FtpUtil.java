@@ -10,10 +10,13 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FtpUtil {
 
+    //加载ftp连接信息
+    public static final HashMap<String, String> FTPINFO_PROPERTIES = FileProcess.readProperties("/ftpconfig.properties");
     /**
      * 连接到ftp服务器
      * @param ip ftp服务器地址
@@ -24,7 +27,6 @@ public class FtpUtil {
      * @return FtpClient
      * @throws RuntimeException
      */
-    @SuppressWarnings("restriction")
     public static FtpClient connect(String ip, int port, String user, String password, String remotePath) throws RuntimeException {
         FtpClient ftpClient = FtpClient.create();
         SocketAddress addr = new InetSocketAddress(ip, port);
@@ -84,7 +86,6 @@ public class FtpUtil {
      * @return
      * @throws Exception
      */
-    @SuppressWarnings("restriction")
     public static long downloadFile(FtpClient ftpClient, String filename, String newfilename) {
         long result = 0;
         InputStream is = null;
@@ -121,7 +122,6 @@ public class FtpUtil {
      *
      * @throws IOException
      */
-    @SuppressWarnings("restriction")
     public static boolean closeServer(FtpClient ftpClient) {
         try {
             if (ftpClient != null) {

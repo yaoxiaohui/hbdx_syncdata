@@ -16,8 +16,6 @@ public class DBConnection {
     public static final HashMap<String, String> CONFIG_PROPERTIES = FileProcess.readProperties("/config.properties");
     // 资源文件
     public static final HashMap<String, String> DB_PROPERTIES = FileProcess.readProperties("/dbconfig.properties");
-    //表信息文件
-    public static final HashMap<String, String> TABLEINFO_PROPERTIES = FileProcess.readProperties("/table_info_config.properties");
 
     static {
         try {

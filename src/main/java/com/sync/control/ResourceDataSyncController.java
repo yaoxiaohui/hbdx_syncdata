@@ -39,7 +39,8 @@ public class ResourceDataSyncController {
         try {
             log.info("=============================TableInfoSyncControl start===============================");
             // 连接ftp
-            ftpClient = FtpUtil.connect("136.142.25.4", 21, "testvoice", "testvoice", "/");
+            ftpClient = FtpUtil.connect(FtpUtil.FTPINFO_PROPERTIES.get("IP"), Integer.parseInt(FtpUtil.FTPINFO_PROPERTIES.get("PORT")),
+                    FtpUtil.FTPINFO_PROPERTIES.get("USER"), FtpUtil.FTPINFO_PROPERTIES.get("PASSWORD"), FtpUtil.FTPINFO_PROPERTIES.get("REMOTEPATH"));
             // 取当天所有未处理文件
             String curDate = TimestampTool.getCurrentDate();
             List<String> fileNameList = FtpUtil.getFileList(ftpClient, "/" + curDate);
