@@ -84,11 +84,10 @@ public class TimestampTool {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         return jDt;
     }
 
-  /**
+    /**
      * 转换为日期类型 yyyy-MM-dd HH:mm:ss
      */
     public static String getCurDate() {

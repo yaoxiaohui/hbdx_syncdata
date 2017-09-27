@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
  * @Modified By :
  */
 @Component
-public class DataGetAndAnalyzeController {
+public class DataAnalyzeController {
 
-    private static final Logger log = Logger.getLogger(DataGetAndAnalyzeController.class);
+    private static final Logger log = Logger.getLogger(DataAnalyzeController.class);
     TableInfoService tableInfoService = new TableInfoServiceImpl();
 
     @Scheduled(cron="0 25 14 * * ?")
-    public void run(){
+    public void dataAnalyze(){
         try {
             log.info("=============================DataGetAndAnalyzeController start===============================");
             tableInfoService.dataGetAndAnalyze();

@@ -1,24 +1,7 @@
 package com.sync.test;
-import com.sync.pojo.TRECORDINFO9;
-import com.sync.pojo.T_CCT_CONTACTDETAIL;
-import com.sync.pojo.T_SR_SERVICEREQUEST;
-import com.sync.service.TableInfoService;
-import com.sync.service.impl.TableInfoServiceImpl;
-import com.zhxg.doc_classify.runstart.RunClass;
 import com.zhxg.doc_classify.runstart.StartClass;
-import net.sf.json.JSONObject;
-import sun.net.ftp.FtpClient;
-import sun.net.ftp.FtpProtocolException;
-import util.FileProcess;
-import util.FtpUtil;
-import util.TimestampTool;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
 
 /**
  * @Author ljw
@@ -97,98 +80,30 @@ public class Test {
             fatherClassifyMapTemp.put("COUNT",count);
             fatherClassifyMap.put(fatherClassify, fatherClassifyMapTemp);
         }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
-    /*public static void main(String[] args) {
-        Runtime runtime = Runtime.getRuntime();
-        //因为在命令窗口进行mysql数据库的导入一般分三步走，所以所执行的命令将以字符串数组的形式出现
-        //根据属性文件的配置获取数据库导入所需的命令，组成一个数组
-//        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
-//                "load data infile 'D:\\TRECORDINFO-201709141530.txt' replace into table TRECORDINFO9 fields terminated by'|';"};
-//        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
-//        "load data infile 'D:\\CONTACTDETAIL-201709151717.txt' replace into table T_CCT_CONTACTDETAIL fields terminated by'|';"};
-
-//        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
-//                "load data infile 'D:\\SERVICEREQUEST-201709141500.txt' replace into table T_SR_SERVICEREQUEST fields terminated by'|';"};
-        String cmdarray[] = {"'C:/Program Files/MySQL/MySQL Server 5.7/bin/mysql.exe' -uroot -proot", "use hbdx",
-                "load data infile 'D:\\SERVICEREQUEST-201709141500.txt' replace into table t_c_users fields terminated by'|';"};
-
-        Process process;
-        try {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>start>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            process = runtime.exec("cmd /c " + cmdarray[0]);
-            //执行了第一条命令以后已经登录到mysql了，所以之后就是利用mysql的命令窗口
-            //进程执行后面的代码
-            OutputStream os = process.getOutputStream();
-            OutputStreamWriter writer = new OutputStreamWriter(os);
-            //命令1和命令2要放在一起执行
-            writer.write(cmdarray[1] + "\r\n" + cmdarray[2]);
-            writer.flush();
-            writer.close();
-            os.close();
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>end>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("执行完成");
-    }*/
-
-    //txt文件读取
-    /*public static void main(String[] args) {
-        TableInfoService tableInfoService = new TableInfoServiceImpl();
-        String[] tableNames = {"T_SR_SERVICEREQUEST", "T_CCT_CONTACTDETAIL", "TRECORDINFO9"};
-        String[] filePaths = {"D:\'+ TimestampTool.getCurrentDate()+"\\SERVICEREQUEST.txt",
-                "D:\'+ TimestampTool.getCurrentDate()+"\\CONTACTDETAIL.txt",
-                "D:\'+ TimestampTool.getCurrentDate()+"\\TRECORDINFO.txt"};
-        String[][] tableFields = {T_SR_SERVICEREQUEST.TSRSERVICEREQUESTFeilds,
-                T_CCT_CONTACTDETAIL.TCCTCONTACTDETAILFeilds,
-                TRECORDINFO9.TRECORDINFO9Feilds};
-        for (int i = 0; i < tableNames.length ; i++) {
-            List<Map<String, String>> mapList = FileProcess.readFile(filePaths[i], tableFields[i]);
-            tableInfoService.addData(mapList, tableNames[i], FileProcess.arrayToString(tableFields[i]));
-        }
-    }*/
-
-//    public static void main(String[] args) throws FtpProtocolException {
+    //    public static void main(String[] args){
+//        try {
+//            Class.forName("oracle.jdbc.driver.OracleDriver");
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        String url = "jdbc:oracle:thin:@172.16.254.206:1521:orcl";
+//        String userName = "HBTELE";
+//        String password = "HBTELE";
 //
-//        FtpClient ftpClient = FtpUtil.connect("136.142.25.4", 21, "testvoice", "testvoice", "/");
-//        System.out.println("===="+ftpClient.isPassiveModeEnabled());
-//        System.out.println("getFileList: "+FtpUtil.getFileList(ftpClient, "/").get(0));
-////        long ll = FtpUtil.downloadFile(ftpClient, "/test/test.txt", "E:\\test\\test.txt");
-////        System.out.println("long : "+ll);
-//        FtpUtil.closeServer(ftpClient);
-//    }
+//        try {
+//            Connection conn = DriverManager.getConnection(url, userName, password);
+//            Statement stmt = conn.createStatement();
+//            ResultSet res = stmt.executeQuery("select * from TEL_RECORD_INFO_1");
+//            while (res.next()){
+//                System.out.println(res.getString(1));
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//      }
 
-
-    /*public static void main(String[] args) {
-        int biz[][] = new int[35][160];
-        // 入参业务id，地区id
-        ++biz[]第【地区id】[业务];
-        //map <业务id，业务alias》
-        // map <area id ,area alisa>
-        // 结果生成二维统计数据
-        for(biz[*]){
-            for (biz[0][ *]){
-                aaa
-                        aaa
-                //row sum
-            }
-            //total sum
-        }
-
-    }*/
 }
 

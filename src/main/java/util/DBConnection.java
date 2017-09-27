@@ -57,47 +57,18 @@ public class DBConnection {
      * 释放对象
      */
     public synchronized void close(PreparedStatement ps,ResultSet rs,Statement statement,Connection connection){
-        if(rs!=null)
-        {
-            try {
+        try {
+            if(rs!=null){
                 rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally{
-                rs = null;
-            }
-        }
-        if(statement!=null)
-        {
-            try {
+            }else if(statement!=null){
                 statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally{
-                statement = null;
-            }
-        }
-
-        if(ps!=null)
-        {
-            try {
+            }else if(ps!=null){
                 ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally{
-                ps = null;
-            }
-        }
-
-        if(connection!=null)
-        {
-            try {
+            }else if(connection!=null){
                 connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally{
-                connection = null;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

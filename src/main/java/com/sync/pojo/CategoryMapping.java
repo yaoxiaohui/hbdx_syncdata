@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 分类映射
  * Created by yaoxiaohui on 2017/9/25.
  */
 public class CategoryMapping {

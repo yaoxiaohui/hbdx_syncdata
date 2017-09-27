@@ -30,7 +30,6 @@ public class TextAnalyze {
             modelMap.put("nice", category.getAlias());
             modelMap.put("keys", category.getRoleWord());
             modelStrList.add(modelMap);
-            modelMap = null;
         }
         return JsonUtil.toJSONString(modelStrList);
     }

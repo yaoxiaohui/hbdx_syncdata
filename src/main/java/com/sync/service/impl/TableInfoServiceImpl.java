@@ -16,19 +16,8 @@ import java.util.Map;
  */
 public class TableInfoServiceImpl implements TableInfoService {
 
-    public List<WorkOrderBean> queryTableInfo() {
-        return new TableInfoDaoImpl().queryTableInfo();
-    }
-
-    public List<CategoryBean> queryTableInfoCategory() {
-        return new TableInfoDaoImpl().queryTableInfoCategory();
-    }
-
     public void addData(List<Map<String, String>> mapList, String table, String fields) {
         new TableInfoDaoImpl().addData(mapList, table, fields);
-    }
-    public void addTagartTableData(List<WorkOrderBean> beanList) {
-        new TableInfoDaoImpl().addTagartTableData(beanList);
     }
 
     public void dataGetAndAnalyze() {

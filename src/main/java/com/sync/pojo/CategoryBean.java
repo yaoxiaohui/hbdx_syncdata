@@ -2,6 +2,12 @@ package com.sync.pojo;
 
 import lombok.Data;
 
+/**
+ * @Author ljw
+ * @Description : 业务分类bean
+ * @Date Created in 13:47 2017/9/04.
+ * @Modified By :
+ */
 @Data
 public class CategoryBean {
       private String  id;

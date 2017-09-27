@@ -1,8 +1,6 @@
 package util;
 
-import com.sync.control.TargetTableInfoSyncController;
 import org.apache.log4j.Logger;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import sun.net.ftp.FtpClient;
 
