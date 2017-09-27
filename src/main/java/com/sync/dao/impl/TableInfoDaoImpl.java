@@ -25,10 +25,10 @@ public class TableInfoDaoImpl implements TableInfoDao {
 
     DBConnection dbConnection = DBConnection.getInstance();
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         TableInfoDaoImpl tableInfoDao = new TableInfoDaoImpl();
         tableInfoDao.dataGetAndAnalyze();
-    }
+    }*/
 
     /**
      * 取出分析数据并入库
@@ -305,14 +305,14 @@ public class TableInfoDaoImpl implements TableInfoDao {
         countResultBean.setXT(XTjsonObject != null ? XTjsonObject.toString() : null);
         addCountresult(countResultBean);
         //更新工单表 插入分析结果
-//        updateWorkorder(workOrderBeans);
+        updateWorkorder(workOrderBeans);
     }
 
     /**
      * 查询数据(原始库表)(旧同步分析数据方案所使用的方法)
      */
     public List<WorkOrderBean> queryTableInfo() {
-        List<WorkOrderBean> beanList = new ArrayList<WorkOrderBean>();
+        List<WorkOrderBean> beanList = new ArrayList<>();
 
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         PreparedStatement ps = null;
@@ -588,7 +588,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         try {
             conn.setAutoCommit(false);
-            String sql = "UPDATE workorder SET keyword=?, emotion=?, matchCategory=?, isAnalyze=? WHERE id = ?";
+            String sql = "UPDATE workorder SET keyword=?, emotion=?, matchCategory=?, isAnalyze=?, phoneLocation=? WHERE id = ?";
             ps = conn.prepareStatement(sql);
             for (int i = 0; i < beanList.size(); i++) {
                 WorkOrderBean workOrderBean = beanList.get(i);
@@ -596,7 +596,8 @@ public class TableInfoDaoImpl implements TableInfoDao {
                 ps.setInt(2, Integer.parseInt(StringUtils.isEmpty(workOrderBean.getEmotion()) ? "0" : workOrderBean.getEmotion()));
                 ps.setString(3, workOrderBean.getMatchCategory());
                 ps.setInt(4, 1);//是否分析(0:未分析,1.分析)
-                ps.setInt(5, Integer.parseInt(workOrderBean.getId()));
+                ps.setString(5, workOrderBean.getCid());//county表中的id
+                ps.setInt(6, Integer.parseInt(workOrderBean.getId()));
                 ps.addBatch();
                 if((i != 0 && i%1000 == 0) || i == beanList.size()-1){
                     ps.executeBatch();
