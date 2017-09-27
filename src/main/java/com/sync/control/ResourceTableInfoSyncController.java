@@ -50,8 +50,8 @@ public class ResourceTableInfoSyncController {
             // 取当天所有未处理文件
             String curDate = TimestampTool.getCurrentDate();
             List<String> fileNameList = FtpUtil.getFileList(ftpClient, "/" + curDate);
-            // 解析时间，求三个文件时间交集，取最小时间同时存在的三个文件。
-            List<String> curTimeList = getMinFileDateTime(fileNameList);
+            // 解析时间，求三个文件时间交集，取同时存在的三个文件。
+            List<String> curTimeList = getAllFileDateTime(fileNameList);
             for (String curTime : curTimeList) {
                 processOneTimeSection(ftpClient, curDate, curTime);
                 log.info("=============================processOneTimeSection:" + curTime +"===============================");
@@ -140,10 +140,13 @@ public class ResourceTableInfoSyncController {
     }
 
     /**
+     * 取所有当天未处理数据时间值，只包含三个文件均存在时间
+     *
+     *
      * @param fileNameList
      * @return
      */
-    private static List<String> getMinFileDateTime(List<String> fileNameList) {
+    private static List<String> getAllFileDateTime(List<String> fileNameList) {
         List<String> sr_dt_list = new ArrayList<>();
         List<String> cd_dt_list = new ArrayList<>();
         List<String> ri_dt_list = new ArrayList<>();
