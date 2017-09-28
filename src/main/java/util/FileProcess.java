@@ -83,7 +83,7 @@ public class FileProcess {
      */
     public static Map<String, String> readFile(FtpClient ftpClient, String filePath, int keyFieldIndex) {
 
-        Map<String, String> mapList = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         InputStream inputStream = null;
         try {
             inputStream = ftpClient.getFileStream(filePath);
@@ -96,7 +96,7 @@ public class FileProcess {
                 if(fieldValue.length - 1 < keyFieldIndex){
                     continue;
                 }
-                mapList.put(fieldValue[keyFieldIndex],line);
+                map.put(fieldValue[keyFieldIndex],line);
             }
 //            //修改已同步的文件名
 //            ftpClient.rename(filePath,filePath+".common");
@@ -112,7 +112,7 @@ public class FileProcess {
                 e.printStackTrace();
             }
         }
-        return mapList;
+        return map;
     }
 
     /**
@@ -126,7 +126,7 @@ public class FileProcess {
      */
     public static List<String> readFile(FtpClient ftpClient, String filePath, int condIndex,String condVal) {
 
-        List<String> mapList = new ArrayList<String>();
+        List<String> strList = new ArrayList<String>();
         InputStream inputStream = null;
         try {
             inputStream = ftpClient.getFileStream(filePath);
@@ -140,7 +140,7 @@ public class FileProcess {
                 if(StringUtils.isEmpty(fieldValue[condIndex]) || fieldValue[condIndex].equals(condVal)){
                     continue;
                 }
-                mapList.add(line);
+                strList.add(line);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,7 +153,7 @@ public class FileProcess {
                 e.printStackTrace();
             }
         }
-        return mapList;
+        return strList;
     }
 
     /**
