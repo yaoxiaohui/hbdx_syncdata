@@ -5,6 +5,7 @@ import com.zhxg.doc_classify.runstart.StartClass;
 import com.zhxg.gdjl.CalModelCluster;
 import com.zhxg.gdjl.InfoPair;
 import com.zhxg.gdjl.ModelCluster;
+import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -46,6 +47,8 @@ public class TextAnalyze {
         String categoryAlias;
         StringBuilder keyword_sb = new StringBuilder();
         JSONObject eachWorkOrderMatchCategroy;
+        String firstCategoryAlias_s;
+        JSONObject firstCategory_jo;
         WorkOrderBean workOrderBean;
         for (int i = 0; i < workOrderBeans.size(); i++) {
 
@@ -73,8 +76,8 @@ public class TextAnalyze {
             for (int j = 0; j < result_ja.length(); j++) {
                 eachresult_jo = (JSONObject) result_ja.get(j);
                 // 取业务所属类目index
-                categoryIndex = CategoryMapping.getIndexByGivenAlias(eachresult_jo.get("tagclassly").toString());
                 categoryAlias = eachresult_jo.get("tagclassly").toString();
+                categoryIndex = CategoryMapping.getIndexByGivenAlias(categoryAlias);
                 // 对应地区和业务的变量增1
                 ++tagAnalysisArr[countyIndex][categoryIndex];
 
@@ -82,7 +85,17 @@ public class TextAnalyze {
                 if (j != result_ja.length() - 1) {
                     keyword_sb.append(",");
                 }
-                eachWorkOrderMatchCategroy.put(categoryAlias, eachresult_jo.get("weight").toString());
+                // 先取一级节点
+                firstCategoryAlias_s = splitFirstCategoryAlias(categoryAlias);
+                // 设置二级节点内容
+                if (eachWorkOrderMatchCategroy.has(firstCategoryAlias_s)) {
+                    firstCategory_jo = eachWorkOrderMatchCategroy.getJSONObject(firstCategoryAlias_s);
+                    firstCategory_jo.put(categoryAlias, eachresult_jo.get("weight").toString());
+                } else {
+                    firstCategory_jo = new JSONObject();
+                    firstCategory_jo.put(categoryAlias, eachresult_jo.get("weight").toString());
+                    eachWorkOrderMatchCategroy.put(firstCategoryAlias_s, firstCategory_jo);
+                }
             }
             workOrderBean.setKeyword(keyword_sb.toString());
             workOrderBean.setMatchCategory(eachWorkOrderMatchCategroy.toString());
@@ -126,5 +139,16 @@ public class TextAnalyze {
         long e = System.currentTimeMillis();
         System.out.println("get the cluster time:>>>>" + (e - s));
         return list;
+    }
+
+    /**
+     * 从二级分类别名中拆除一级分类别名
+     * 如：CFLH-RHKDLW中拆除CFLH返回
+     *
+     * @param secondCategory 二级分类别名
+     * @return
+     */
+    private static String splitFirstCategoryAlias(@NonNull String secondCategory) {
+        return secondCategory.split("-")[0];
     }
 }
