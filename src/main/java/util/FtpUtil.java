@@ -68,7 +68,7 @@ public class FtpUtil {
             dis = new DataInputStream(ftpClient.nameList(path));
             String filename = "";
             while((filename = dis.readLine()) != null){
-                String filenameFuffix = filename.split(".")[1];
+                String filenameFuffix = filename.split("\\.")[1];
                 if(!filename.contains("common") && ("txt").equals(filenameFuffix)){
                     list.add(filename);
                 }
