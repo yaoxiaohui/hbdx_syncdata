@@ -35,7 +35,8 @@ public class FtpUtil {
             ftpClient.login(user, password.toCharArray());
             ftpClient.setBinaryType();
             if (remotePath!=null && remotePath.length() != 0) { // 把远程系统上的目录切换到参数path所指定的目录
-                String[] paths=remotePath.split("/");
+                ftpClient.changeDirectory(remotePath);
+                /*String[] paths=remotePath.split("/");
                 for(String path : paths){
                     if(path.length() == 0)
                         continue;
@@ -45,7 +46,7 @@ public class FtpUtil {
                         ftpClient.makeDirectory(path);
                         ftpClient.changeDirectory(path);
                     }
-                }
+                }*/
             }
             return ftpClient;
         }catch(Exception ex){
@@ -67,7 +68,8 @@ public class FtpUtil {
             dis = new DataInputStream(ftpClient.nameList(path));
             String filename = "";
             while((filename = dis.readLine()) != null){
-                if(!filename.contains("common")){
+                String filenameFuffix = filename.split(".")[1];
+                if(!filename.contains("common") && ("txt").equals(filenameFuffix)){
                     list.add(filename);
                 }
             }

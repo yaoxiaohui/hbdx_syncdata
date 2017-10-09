@@ -32,27 +32,35 @@ public class ResourceDataSyncController {
     private static TableInfoService tableInfoService = new TableInfoServiceImpl();
     private static final String FILE_PATTERN = "/%s/%s-%s.txt";
 
-    @Scheduled(cron = "0 25 14 * * ?")
-    public static void syncData() {
+   /* public static void main(String[] args) {
+        ResourceDataSyncController resourceDataSyncController = new ResourceDataSyncController();
+        resourceDataSyncController.syncData();
+    }*/
+    //半小时执行一次
+//    @Scheduled(cron = "0 0/05 * * * ?")
+    public void syncData() {
 
         FtpClient ftpClient = null;
         try {
-            log.info("=============================TableInfoSyncControl start===============================");
+            log.info("=============================ResourceDataSyncController start===============================");
             // 连接ftp
             ftpClient = FtpUtil.connect(FtpUtil.FTPINFO_PROPERTIES.get("IP"), Integer.parseInt(FtpUtil.FTPINFO_PROPERTIES.get("PORT")),
                     FtpUtil.FTPINFO_PROPERTIES.get("USER"), FtpUtil.FTPINFO_PROPERTIES.get("PASSWORD"), FtpUtil.FTPINFO_PROPERTIES.get("REMOTEPATH"));
             // 取当天所有未处理文件
             String curDate = TimestampTool.getCurrentDate();
+//            List<String> fileNameList = FtpUtil.getFileList(ftpClient, "/home/yaoxiaohui/dbdx/" + curDate);
             List<String> fileNameList = FtpUtil.getFileList(ftpClient, "/" + curDate);
+            log.info(">>>>>>>>>>>>Get fileNameList size is>>>>>>>>>>>>>"+fileNameList.size());
             // 解析时间，求三个文件时间交集，取同时存在的三个文件。
             List<String> curTimeList = getAllFileDateTime(fileNameList);
             for (String curTime : curTimeList) {
+//                processOneTimeSection(ftpClient, "/home/yaoxiaohui/dbdx/" + curDate, curTime);
                 processOneTimeSection(ftpClient, curDate, curTime);
                 log.info("=============================processOneTimeSection:" + curTime +"===============================");
             }
-            log.info("=============================TableInfoSyncControl stop===============================");
+            log.info("=============================ResourceDataSyncController stop===============================");
         } catch (Exception e) {
-            log.error("TableInfoSyncControl.run() is error >>>>>>", e);
+            log.error("ResourceDataSyncController.syncData() is error >>>>>>", e);
         } finally {
             if (ftpClient != null) {
                 if (ftpClient.isConnected()) {
@@ -123,6 +131,7 @@ public class ResourceDataSyncController {
             map.put("sourceAudioPath", sourceAudioPath);
             mapList.add(map);
         }
+        log.info(">>>>>>>>>>>>Sync save workorderList size is >>>>>>>>>>>>>"+mapList.size());
         tableInfoService.addData(mapList, "workorder", FileProcess.arrayToString(WorkOrderBean.WORKORDERFeilds));
 
         //修改已同步的文件名
@@ -142,6 +151,8 @@ public class ResourceDataSyncController {
         List<String> cd_dt_list = new ArrayList<>();
         List<String> ri_dt_list = new ArrayList<>();
         for (String loopfn : fileNameList) {
+            String[] loopfnArray = loopfn.split("/");
+            loopfn = loopfnArray[loopfnArray.length-1];
             if (loopfn.startsWith("SERVICEREQUEST-")) {
                 sr_dt_list.add(loopfn.replace("SERVICEREQUEST-", "").replace(".txt", ""));
             }

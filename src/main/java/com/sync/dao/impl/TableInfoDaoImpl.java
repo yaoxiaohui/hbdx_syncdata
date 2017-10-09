@@ -34,6 +34,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         String modelString = TextAnalyze.getModelStr(categoryBeans);
         //工单信息和相关表的信息
         List<WorkOrderBean> workOrderBeans = queryTableInfoWorkorder();
+        log.info(">>>>>>>>>>>>>>>>>workOrderBeans.size is>>>>>>>>>>>>>>>>>"+workOrderBeans.size());
         int[][] resultArray = TextAnalyze.categoryAnalyze(modelString, workOrderBeans, categoryBeans);
 
         //统计的每个地区的工单条数

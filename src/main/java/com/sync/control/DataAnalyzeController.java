@@ -17,7 +17,13 @@ public class DataAnalyzeController {
     private static final Logger log = Logger.getLogger(DataAnalyzeController.class);
     TableInfoService tableInfoService = new TableInfoServiceImpl();
 
-    @Scheduled(cron="0 25 14 * * ?")
+    public static void main(String[] args) {
+        DataAnalyzeController dataAnalyzeController = new DataAnalyzeController();
+        dataAnalyzeController.dataAnalyze();
+    }
+    //一小时执行一次
+//    @Scheduled(cron="0 0 0/1 * * ?")
+    @Scheduled(cron = "0 0/05 * * * ?")
     public void dataAnalyze(){
         try {
             log.info("=============================DataGetAndAnalyzeController start===============================");
