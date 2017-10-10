@@ -32,12 +32,12 @@ public class ResourceDataSyncController {
     private static TableInfoService tableInfoService = new TableInfoServiceImpl();
     private static final String FILE_PATTERN = "/%s/%s-%s.txt";
 
-   /* public static void main(String[] args) {
+    public static void main(String[] args) {
         ResourceDataSyncController resourceDataSyncController = new ResourceDataSyncController();
         resourceDataSyncController.syncData();
-    }*/
-    //半小时执行一次
-//    @Scheduled(cron = "0 0/05 * * * ?")
+    }
+    //启动时执行一次，后面每隔30分钟执行一次（毫秒）
+    @Scheduled(fixedRate = 1000 * 60 * 30)
     public void syncData() {
 
         FtpClient ftpClient = null;
@@ -101,6 +101,7 @@ public class ResourceDataSyncController {
         String acceptLocation;
         String phoneLocation;
         String sourceAudioPath;
+        String callCenterId;
         List<Map<String, String>> mapList = new ArrayList<>();
         Map<String, String> map;
         for (String loopcd : cdList) {
@@ -122,6 +123,8 @@ public class ResourceDataSyncController {
             acceptLocation = srItems[10];
             phoneLocation = srItems[8];
             sourceAudioPath = riMap.get(callid).split("\\|")[1];
+            callCenterId = riMap.get(callid).split("\\|")[2];
+
             map = new HashMap<>();
             map.put("serialNum", serialNum);
             map.put("customerServiceId", customerServiceId);
@@ -129,6 +132,7 @@ public class ResourceDataSyncController {
             map.put("acceptLocation", acceptLocation);
             map.put("phoneLocation", phoneLocation);
             map.put("sourceAudioPath", sourceAudioPath);
+            map.put("callCenterId", callCenterId);
             mapList.add(map);
         }
         log.info(">>>>>>>>>>>>Sync save workorderList size is >>>>>>>>>>>>>"+mapList.size());

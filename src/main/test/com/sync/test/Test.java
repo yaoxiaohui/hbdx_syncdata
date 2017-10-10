@@ -81,7 +81,8 @@ public class Test {
             fatherClassifyMapTemp.put("COUNT",count);
             fatherClassifyMap.put(fatherClassify, fatherClassifyMapTemp);
         }*/
-
+        String loopfn = "TRECORDINFO-201710100230.txt6";
+        System.out.println(loopfn.replace("TRECORDINFO-", "").split("\\.")[0]);
 
     }
 
@@ -107,7 +108,6 @@ public class Test {
 //            e.printStackTrace();
 //        }
 //      }
-
 
 
 }

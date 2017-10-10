@@ -21,9 +21,8 @@ public class DataAnalyzeController {
         DataAnalyzeController dataAnalyzeController = new DataAnalyzeController();
         dataAnalyzeController.dataAnalyze();
     }
-    //一小时执行一次
-//    @Scheduled(cron="0 0 0/1 * * ?")
-    @Scheduled(cron = "0 0/05 * * * ?")
+    //启动时执行一次，后面每隔30分钟执行一次（毫秒）
+    @Scheduled(fixedRate = 1000 * 60 * 30)
     public void dataAnalyze(){
         try {
             log.info("=============================DataGetAndAnalyzeController start===============================");

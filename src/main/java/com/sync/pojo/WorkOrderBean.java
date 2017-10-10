@@ -35,7 +35,8 @@ public class WorkOrderBean {
                        "phoneNum",
                        "acceptLocation",
                        "phoneLocation",
-                       "sourceAudioPath"
+                       "sourceAudioPath",
+                       "callCenterId"
                };
 
 }
