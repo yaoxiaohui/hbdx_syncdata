@@ -367,7 +367,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String sql = "SELECT w.id, wc.content_a, wc.content_q, c.alias, c.id cid FROM ((workordercontent wc " +
+        String sql = "SELECT w.id, wc.content_a, wc.content_q, wc.content, c.alias, c.id cid FROM ((workordercontent wc " +
                 "JOIN workorder w ON w.id = wc.workOrderId AND wc.content_a IS NOT NULL AND w.isAnalyze = 0) " +
                 "JOIN t_c_users tcu ON w.phoneNum = tcu.DEVICE_NUMBER) JOIN county c ON tcu.CITY_NO = c.id AND c.alias IS NOT NULL";
         try {
@@ -376,7 +376,8 @@ public class TableInfoDaoImpl implements TableInfoDao {
             while (rs.next()) {
                 WorkOrderBean workOrderBean = new WorkOrderBean();
                 workOrderBean.setId(String.valueOf(rs.getObject("id")));
-                workOrderBean.setTextContent(String.valueOf(rs.getObject("content_a"))+String.valueOf(rs.getObject("content_q")));
+                //以下字段分为两种情况：1.非话者分离（content字段有值）2.话者分离（content_a和content_q字段有值）
+                workOrderBean.setTextContent(String.valueOf(rs.getObject("content"))+String.valueOf(rs.getObject("content_a"))+String.valueOf(rs.getObject("content_q")));
                 workOrderBean.setCountyAlias(String.valueOf(rs.getObject("alias")));
                 workOrderBean.setCid(String.valueOf(rs.getObject("cid")));
                 beanList.add(workOrderBean);
