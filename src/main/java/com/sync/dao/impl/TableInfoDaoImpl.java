@@ -26,21 +26,21 @@ public class TableInfoDaoImpl implements TableInfoDao {
     DBConnection dbConnection = DBConnection.getInstance();
 
     /**
-     * È¡³ö·ÖÎöÊı¾İ²¢Èë¿â
+     * å–å‡ºåˆ†ææ•°æ®å¹¶å…¥åº“
      */
     public void dataGetAndAnalyze() {
-        //²éÑ¯·ÖÀàĞÅÏ¢
+        //æŸ¥è¯¢åˆ†ç±»ä¿¡æ¯
         List<CategoryBean> categoryBeans = queryTableInfoCategory();
         String modelString = TextAnalyze.getModelStr(categoryBeans);
-        //¹¤µ¥ĞÅÏ¢ºÍÏà¹Ø±íµÄĞÅÏ¢
+        //å·¥å•ä¿¡æ¯å’Œç›¸å…³è¡¨çš„ä¿¡æ¯
         List<WorkOrderBean> workOrderBeans = queryTableInfoWorkorder();
         log.info(">>>>>>>>>>>>>>>>>workOrderBeans.size is>>>>>>>>>>>>>>>>>"+workOrderBeans.size());
         int[][] resultArray = TextAnalyze.categoryAnalyze(modelString, workOrderBeans, categoryBeans);
 
-        //Í³¼ÆµÄÃ¿¸öµØÇøµÄ¹¤µ¥ÌõÊı
+        //ç»Ÿè®¡çš„æ¯ä¸ªåœ°åŒºçš„å·¥å•æ¡æ•°
         Map<String, Integer> countMap = queryTableInfoCount();
 
-        //¸÷¸öÊĞ
+        //å„ä¸ªå¸‚
         JSONObject CZjsonObject = new JSONObject();
         JSONObject TSjsonObject = new JSONObject();
         JSONObject QHDjsonObject = new JSONObject();
@@ -52,7 +52,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         JSONObject SJZjsonObject = new JSONObject();
         JSONObject CDjsonObject = new JSONObject();
         JSONObject HSjsonObject = new JSONObject();
-        //ÊĞÏÂµÄÇøÏØ¼¯ºÏ
+        //å¸‚ä¸‹çš„åŒºå¿é›†åˆ
         JSONObject CZcountyJsonObjectTempArea = new JSONObject();
         JSONObject TScountyJsonObjectTempArea = new JSONObject();
         JSONObject QHDcountyJsonObjectTempArea = new JSONObject();
@@ -87,7 +87,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         int CDTELECOUNTCount = 0;
         int HSTELECOUNTCount = 0;
         for (int i = 1; i < resultArray.length; i++) {
-            //¸÷¸ö¸¸·ÖÀà
+            //å„ä¸ªçˆ¶åˆ†ç±»
             JSONObject fatherJsonObject = new JSONObject();
 //            JSONObject CFLHjsonObject = new JSONObject();
 //            JSONObject JZjsonObject = new JSONObject();
@@ -96,7 +96,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
 //            JSONObject TCQYjsonObject = new JSONObject();
 //            JSONObject XSHDjsonObject = new JSONObject();
 //            JSONObject WTWJjsonObject = new JSONObject();
-            //¸÷¸ö¸¸·ÖÀà Í³¼Æ
+            //å„ä¸ªçˆ¶åˆ†ç±» ç»Ÿè®¡
             JSONObject XZjsonObjectCount = new JSONObject();
             JSONObject CFLHjsonObjectCount = new JSONObject();
             JSONObject JZjsonObjectCount = new JSONObject();
@@ -105,7 +105,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             JSONObject TCQYjsonObjectCount = new JSONObject();
             JSONObject XSHDjsonObjectCount = new JSONObject();
             JSONObject WTWJjsonObjectCount = new JSONObject();
-            //¸÷¸ö×Ó·ÖÀà
+            //å„ä¸ªå­åˆ†ç±»
             JSONObject SONXZjsonObject = new JSONObject();
             JSONObject SONCFLHjsonObject = new JSONObject();
             JSONObject SONJZjsonObject = new JSONObject();
@@ -114,7 +114,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             JSONObject SONTCQYjsonObject = new JSONObject();
             JSONObject SONXSHDjsonObject = new JSONObject();
             JSONObject SONWTWJjsonObject = new JSONObject();
-            //¸÷¸ö·ÖÀàÊıÁ¿Í³¼Æ
+            //å„ä¸ªåˆ†ç±»æ•°é‡ç»Ÿè®¡
             int XZcategoryCount = 0;
             int CFcategoryCount = 0;
             int JZcategoryCount = 0;
@@ -185,7 +185,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             WTWJjsonObjectCount.put("COUNT", WTWJcategoryCount);
             fatherJsonObject.put("WTWJ", WTWJjsonObjectCount);
 
-            //ÇøÏØµÄÍ³¼Æ½á¹¹
+            //åŒºå¿çš„ç»Ÿè®¡ç»“æ„
             JSONObject countyJsonObject = new JSONObject();
 
             String countyAlias = CountyMapping.getAliasByGivenIndex(String.valueOf(i));
@@ -286,7 +286,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         XTjsonObject.put("TELECOUNT", XTTELECOUNTCount);
         XTjsonObject.put("COUNTY", XTcountyJsonObjectTempArea);
 
-        //²åÈë·ÖÎö½á¹û Ïòcountresult±í
+        //æ’å…¥åˆ†æç»“æœ å‘countresultè¡¨
         CountResultBean countResultBean = new CountResultBean();
         countResultBean.setSJZ(SJZjsonObject != null ? SJZjsonObject.toString() : null);
         countResultBean.setBD(BDjsonObject != null ? BDjsonObject.toString() : null);
@@ -300,12 +300,12 @@ public class TableInfoDaoImpl implements TableInfoDao {
         countResultBean.setZJK(ZJKjsonObject != null ? ZJKjsonObject.toString() : null);
         countResultBean.setXT(XTjsonObject != null ? XTjsonObject.toString() : null);
         addCountresult(countResultBean);
-        //¸üĞÂ¹¤µ¥±í ²åÈë·ÖÎö½á¹û
+        //æ›´æ–°å·¥å•è¡¨ æ’å…¥åˆ†æç»“æœ
         updateWorkorder(workOrderBeans);
     }
 
     /**
-     * ²éÑ¯Êı¾İ(category·ÖÀà±í)
+     * æŸ¥è¯¢æ•°æ®(categoryåˆ†ç±»è¡¨)
      */
     public List<CategoryBean> queryTableInfoCategory() {
 
@@ -335,7 +335,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * ²éÑ¯Êı¾İ(µØÇø±ícounty)
+     * æŸ¥è¯¢æ•°æ®(åœ°åŒºè¡¨county)
      */
     public Map<Integer, String> queryTableInfoCounty() {
         Map<Integer, String> map = new HashMap<>();
@@ -358,7 +358,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * ²éÑ¯Êı¾İ(workorder ¹¤µ¥±í¼°Ïà¹ØÁª±í)
+     * æŸ¥è¯¢æ•°æ®(workorder å·¥å•è¡¨åŠç›¸å…³è”è¡¨)
      */
     public List<WorkOrderBean> queryTableInfoWorkorder() {
 
@@ -376,7 +376,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
             while (rs.next()) {
                 WorkOrderBean workOrderBean = new WorkOrderBean();
                 workOrderBean.setId(String.valueOf(rs.getObject("id")));
-                //ÒÔÏÂ×Ö¶Î·ÖÎªÁ½ÖÖÇé¿ö£º1.·Ç»°Õß·ÖÀë£¨content×Ö¶ÎÓĞÖµ£©2.»°Õß·ÖÀë£¨content_aºÍcontent_q×Ö¶ÎÓĞÖµ£©
+                //ä»¥ä¸‹å­—æ®µåˆ†ä¸ºä¸¤ç§æƒ…å†µï¼š1.éè¯è€…åˆ†ç¦»ï¼ˆcontentå­—æ®µæœ‰å€¼ï¼‰2.è¯è€…åˆ†ç¦»ï¼ˆcontent_aå’Œcontent_qå­—æ®µæœ‰å€¼ï¼‰
                 workOrderBean.setTextContent(String.valueOf(rs.getObject("content"))+String.valueOf(rs.getObject("content_a"))+String.valueOf(rs.getObject("content_q")));
                 workOrderBean.setCountyAlias(String.valueOf(rs.getObject("alias")));
                 workOrderBean.setCid(String.valueOf(rs.getObject("cid")));
@@ -391,7 +391,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * ²éÑ¯Êı¾İ(workorder ¹¤µ¥±í¼°Ïà¹ØÁª±í) Í³¼ÆÃ¿¸öµØÇøµÄ¹¤µ¥ÊıÁ¿
+     * æŸ¥è¯¢æ•°æ®(workorder å·¥å•è¡¨åŠç›¸å…³è”è¡¨) ç»Ÿè®¡æ¯ä¸ªåœ°åŒºçš„å·¥å•æ•°é‡
      */
     public Map<String, Integer> queryTableInfoCount() {
         Map<String, Integer> countMap = new HashMap<>();
@@ -423,7 +423,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
         return countMap;
     }
     /**
-     * Ìí¼ÓÊı¾İ(Ô­Ê¼±íÀïÌí¼ÓÊı¾İ)
+     * æ·»åŠ æ•°æ®(åŸå§‹è¡¨é‡Œæ·»åŠ æ•°æ®)
      */
     public void addData(List<Map<String, String>> mapList, String table, String fields) {
         PreparedStatement ps = null;
@@ -458,7 +458,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * Ìí¼Óµ½Í³¼Æ½á¹û±í
+     * æ·»åŠ åˆ°ç»Ÿè®¡ç»“æœè¡¨
      * @param countResultBean
      */
     public void addCountresult(CountResultBean countResultBean) {
@@ -491,7 +491,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     }
 
     /**
-     * ¸üĞÂ¹¤µ¥±í£¬²åÈëÏàÓ¦µÄ·ÖÎö×Ö¶Î
+     * æ›´æ–°å·¥å•è¡¨ï¼Œæ’å…¥ç›¸åº”çš„åˆ†æå­—æ®µ
      * @param beanList
      */
     public void updateWorkorder(List<WorkOrderBean> beanList) {
@@ -507,8 +507,8 @@ public class TableInfoDaoImpl implements TableInfoDao {
                 ps.setString(1, workOrderBean.getKeyword());
                 ps.setInt(2, Integer.parseInt(StringUtils.isEmpty(workOrderBean.getEmotion()) ? "0" : workOrderBean.getEmotion()));
                 ps.setString(3, workOrderBean.getMatchCategory());
-                ps.setInt(4, 1);//ÊÇ·ñ·ÖÎö(0:Î´·ÖÎö,1.·ÖÎö)
-                ps.setString(5, workOrderBean.getCid());//county±íÖĞµÄid
+                ps.setInt(4, 1);//æ˜¯å¦åˆ†æ(0:æœªåˆ†æ,1.åˆ†æ)
+                ps.setString(5, workOrderBean.getCid());//countyè¡¨ä¸­çš„id
                 ps.setInt(6, Integer.parseInt(workOrderBean.getId()));
                 ps.addBatch();
                 if((i != 0 && i%1000 == 0) || i == beanList.size()-1){
