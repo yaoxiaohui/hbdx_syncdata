@@ -1,8 +1,16 @@
 package com.sync.test;
 import com.sync.control.ResourceDataSyncController;
+import com.sync.dao.impl.TableInfoDaoImpl;
+import com.sync.pojo.WorkOrderBean;
+import com.sync.pojo.WorkOrderContentBean;
 import com.zhxg.doc_classify.runstart.StartClass;
+import com.zhxg.gdjl.CalModelCluster;
+import com.zhxg.gdjl.InfoPair;
+import com.zhxg.gdjl.ModelCluster;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author ljw
@@ -12,8 +20,8 @@ import java.io.*;
  */
 public class Test {
 
-    public static void main(String[] sad) {
-        /*String modelString = "[{'keys':'手机加宽带 手机和电视绑定 宽带绑定 带宽带和电视 业务加起来 宽带和那个平板电视 手机宽带电视捆绑 捆绑的融合的业务 手机宽带绑定 电信宽带这个和手机那个绑定 赠这个宽带给这个电视 买手机赠红包 套餐比较合适 手机卡电视还有宽带','name':'融合新装','nice':'XZ-RHXZ'},{'keys':'装宽带 安宽带 现装宽带 4G宽带 宽带怎么装 装一下宽带 手机宽带和电视宽带捆绑 宽带网是电信的 装个宽带 办宽带 宽带是半年是多少钱 电信的那个宽带 新装一条宽带 宽带咋办 捆绑宽带 申请这个宽带 光纤的宽带 家里宽带 电视跟宽带套餐 一百兆带宽','name':'单宽新装','nice':'XZ-DKXZ'},{'keys':'机顶盒 猫和机顶盒 光猫 电信电视 加一个电视 办理电视和宽带 电信这个网络电视 宽带电视 加装一个IPTV','name':'单TV新装','nice':'XZ-DTVXZ'},{'keys':'退网 销卡 能不能销 退订 不想用 不想交钱 销这个号 退费 退了它 接受不了 销号 退机 号码销掉 自动放弃 不要了 销户 要退了 办亲情号','name':'中高危客户挽留','nice':'CFLH-ZGWHKWL'},{'keys':'流量包 天翼视讯 亲情号 腾讯的流量包 流量加油包 开通一下流量','name':'附属产品加包','nice':'JZ-FSCPJB'},{'keys':'到期 续约 返费 没有协议的','name':'租机续约','nice':'XFXY-ZJXY'},{'keys':'缴话费 交话费 交话费送话费 存多少送多少 缴费赠费 缴费赠流量 缴费赠易支付红包 参与活动缴费 缴200赠1G流量 缴200送1G流量 缴赠 缴200话费赠1G流量 预交话费赠流量 缴费就能赠流量 缴费赠送 交60块钱增60块钱话费 交费赠流量 免费获赠1G 存30赠30 存60增60 交50赠50 存30增的易支付红包 存30赠的易支付红包 直接赠 50话费赠50话费 交费赠易支付红包 缴话费 为什么没赠 交了100','name':'缴赠','nice':'XFXY-JF'},{'keys':'工信部 打官司 通管局 集团热线 315热线 网络曝光 起诉你们 监督电信服务 单位上边的部门 打120报案 投诉你们经理 省青年报反映 上传到网上 向上级 投诉 法律来维权','name':'越级倾向','nice':'WTWJ-YJQX'}]";
+    /*public static void main(String[] sad) {
+        *//*String modelString = "[{'keys':'手机加宽带 手机和电视绑定 宽带绑定 带宽带和电视 业务加起来 宽带和那个平板电视 手机宽带电视捆绑 捆绑的融合的业务 手机宽带绑定 电信宽带这个和手机那个绑定 赠这个宽带给这个电视 买手机赠红包 套餐比较合适 手机卡电视还有宽带','name':'融合新装','nice':'XZ-RHXZ'},{'keys':'装宽带 安宽带 现装宽带 4G宽带 宽带怎么装 装一下宽带 手机宽带和电视宽带捆绑 宽带网是电信的 装个宽带 办宽带 宽带是半年是多少钱 电信的那个宽带 新装一条宽带 宽带咋办 捆绑宽带 申请这个宽带 光纤的宽带 家里宽带 电视跟宽带套餐 一百兆带宽','name':'单宽新装','nice':'XZ-DKXZ'},{'keys':'机顶盒 猫和机顶盒 光猫 电信电视 加一个电视 办理电视和宽带 电信这个网络电视 宽带电视 加装一个IPTV','name':'单TV新装','nice':'XZ-DTVXZ'},{'keys':'退网 销卡 能不能销 退订 不想用 不想交钱 销这个号 退费 退了它 接受不了 销号 退机 号码销掉 自动放弃 不要了 销户 要退了 办亲情号','name':'中高危客户挽留','nice':'CFLH-ZGWHKWL'},{'keys':'流量包 天翼视讯 亲情号 腾讯的流量包 流量加油包 开通一下流量','name':'附属产品加包','nice':'JZ-FSCPJB'},{'keys':'到期 续约 返费 没有协议的','name':'租机续约','nice':'XFXY-ZJXY'},{'keys':'缴话费 交话费 交话费送话费 存多少送多少 缴费赠费 缴费赠流量 缴费赠易支付红包 参与活动缴费 缴200赠1G流量 缴200送1G流量 缴赠 缴200话费赠1G流量 预交话费赠流量 缴费就能赠流量 缴费赠送 交60块钱增60块钱话费 交费赠流量 免费获赠1G 存30赠30 存60增60 交50赠50 存30增的易支付红包 存30赠的易支付红包 直接赠 50话费赠50话费 交费赠易支付红包 缴话费 为什么没赠 交了100','name':'缴赠','nice':'XFXY-JF'},{'keys':'工信部 打官司 通管局 集团热线 315热线 网络曝光 起诉你们 监督电信服务 单位上边的部门 打120报案 投诉你们经理 省青年报反映 上传到网上 向上级 投诉 法律来维权','name':'越级倾向','nice':'WTWJ-YJQX'}]";
         //D:\\zhxg\\doc  表示日志输出位置  可以为空
         StartClass sc = new StartClass(modelString);
 //        String ds = RunClass.init(modelString, "D:\\zhxg\\doc");
@@ -31,9 +39,9 @@ public class Test {
                 "om/images/20170905/54511cf2df3645389d34e5961c915074.gifendimg ";
 //        String result = RunClass.run(title, content);
         String result = sc.run("title", content);
-        System.out.println("result>>>>>>"+result);*/
+        System.out.println("result>>>>>>"+result);*//*
 
-        /*String modelString = "[{'keys':'手机加宽带 手机和电视绑定 宽带绑定 带宽带和电视 业务加起来 宽带和那个平板电视 手机宽带电视捆绑 捆绑的融合的业务 手机宽带绑定 电信宽带这个和手机那个绑定 赠这个宽带给这个电视 买手机赠红包 套餐比较合适 手机卡电视还有宽带','name':'融合新装','nice':'XZ-RHXZ'},{'keys':'装宽带 安宽带 现装宽带 4G宽带 宽带怎么装 装一下宽带 手机宽带和电视宽带捆绑 宽带网是电信的 装个宽带 办宽带 宽带是半年是多少钱 电信的那个宽带 新装一条宽带 宽带咋办 捆绑宽带 申请这个宽带 光纤的宽带 家里宽带 电视跟宽带套餐 一百兆带宽','name':'单宽新装','nice':'XZ-DKXZ'},{'keys':'机顶盒 猫和机顶盒 光猫 电信电视 加一个电视 办理电视和宽带 电信这个网络电视 宽带电视 加装一个IPTV','name':'单TV新装','nice':'XZ-DTVXZ'},{'keys':'退网 销卡 能不能销 退订 不想用 不想交钱 销这个号 退费 退了它 接受不了 销号 退机 号码销掉 自动放弃 不要了 销户 要退了 办亲情号','name':'中高危客户挽留','nice':'CFLH-ZGWHKWL'},{'keys':'流量包 天翼视讯 亲情号 腾讯的流量包 流量加油包 开通一下流量','name':'附属产品加包','nice':'JZ-FSCPJB'},{'keys':'到期 续约 返费 没有协议的','name':'租机续约','nice':'XFXY-ZJXY'},{'keys':'缴话费 交话费 交话费送话费 存多少送多少 缴费赠费 缴费赠流量 缴费赠易支付红包 参与活动缴费 缴200赠1G流量 缴200送1G流量 缴赠 缴200话费赠1G流量 预交话费赠流量 缴费就能赠流量 缴费赠送 交60块钱增60块钱话费 交费赠流量 免费获赠1G 存30赠30 存60增60 交50赠50 存30增的易支付红包 存30赠的易支付红包 直接赠 50话费赠50话费 交费赠易支付红包 缴话费 为什么没赠 交了100','name':'缴赠','nice':'XFXY-JF'},{'keys':'工信部 打官司 通管局 集团热线 315热线 网络曝光 起诉你们 监督电信服务 单位上边的部门 打120报案 投诉你们经理 省青年报反映 上传到网上 向上级 投诉 法律来维权','name':'越级倾向','nice':'WTWJ-YJQX'}]";
+        *//*String modelString = "[{'keys':'手机加宽带 手机和电视绑定 宽带绑定 带宽带和电视 业务加起来 宽带和那个平板电视 手机宽带电视捆绑 捆绑的融合的业务 手机宽带绑定 电信宽带这个和手机那个绑定 赠这个宽带给这个电视 买手机赠红包 套餐比较合适 手机卡电视还有宽带','name':'融合新装','nice':'XZ-RHXZ'},{'keys':'装宽带 安宽带 现装宽带 4G宽带 宽带怎么装 装一下宽带 手机宽带和电视宽带捆绑 宽带网是电信的 装个宽带 办宽带 宽带是半年是多少钱 电信的那个宽带 新装一条宽带 宽带咋办 捆绑宽带 申请这个宽带 光纤的宽带 家里宽带 电视跟宽带套餐 一百兆带宽','name':'单宽新装','nice':'XZ-DKXZ'},{'keys':'机顶盒 猫和机顶盒 光猫 电信电视 加一个电视 办理电视和宽带 电信这个网络电视 宽带电视 加装一个IPTV','name':'单TV新装','nice':'XZ-DTVXZ'},{'keys':'退网 销卡 能不能销 退订 不想用 不想交钱 销这个号 退费 退了它 接受不了 销号 退机 号码销掉 自动放弃 不要了 销户 要退了 办亲情号','name':'中高危客户挽留','nice':'CFLH-ZGWHKWL'},{'keys':'流量包 天翼视讯 亲情号 腾讯的流量包 流量加油包 开通一下流量','name':'附属产品加包','nice':'JZ-FSCPJB'},{'keys':'到期 续约 返费 没有协议的','name':'租机续约','nice':'XFXY-ZJXY'},{'keys':'缴话费 交话费 交话费送话费 存多少送多少 缴费赠费 缴费赠流量 缴费赠易支付红包 参与活动缴费 缴200赠1G流量 缴200送1G流量 缴赠 缴200话费赠1G流量 预交话费赠流量 缴费就能赠流量 缴费赠送 交60块钱增60块钱话费 交费赠流量 免费获赠1G 存30赠30 存60增60 交50赠50 存30增的易支付红包 存30赠的易支付红包 直接赠 50话费赠50话费 交费赠易支付红包 缴话费 为什么没赠 交了100','name':'缴赠','nice':'XFXY-JF'},{'keys':'工信部 打官司 通管局 集团热线 315热线 网络曝光 起诉你们 监督电信服务 单位上边的部门 打120报案 投诉你们经理 省青年报反映 上传到网上 向上级 投诉 法律来维权','name':'越级倾向','nice':'WTWJ-YJQX'}]";
         //D:\\zhxg\\doc  表示日志输出位置  可以为空
         String ds = RunClass.init(modelString, "");
         System.out.println(">>>>>>>>"+ds);
@@ -80,11 +88,12 @@ public class Test {
             fatherClassifyMapTemp.put("SON",sunClassifyMap);
             fatherClassifyMapTemp.put("COUNT",count);
             fatherClassifyMap.put(fatherClassify, fatherClassifyMapTemp);
-        }*/
+        }*//*
         String loopfn = "TRECORDINFO-201710100230.txt6";
         System.out.println(loopfn.replace("TRECORDINFO-", "").split("\\.")[0]);
 
-    }
+
+    }*/
 
     //    public static void main(String[] args){
 //        try {
@@ -108,7 +117,64 @@ public class Test {
 //            e.printStackTrace();
 //        }
 //      }
+    /**
+     * 观点聚类（暂时没用到，后期用）
+     */
+    public static List<ModelCluster> clusterCal(List<WorkOrderBean> listinfo) throws Exception {
+        List<ModelCluster> list = new ArrayList<ModelCluster>();
 
+        if (listinfo == null || listinfo.isEmpty()) return null;
+        List<InfoPair> liststr = new ArrayList<InfoPair>();
+
+        for (WorkOrderBean workOrder : listinfo) {
+            InfoPair infp = new InfoPair();
+            infp.id = workOrder.getId();
+            infp.content = workOrder.getTextContent();
+            liststr.add(infp);
+        }
+        System.out.println("get the cal datas:>>>>" + liststr.size());
+        long s = System.currentTimeMillis();
+        //聚类
+        if (liststr != null && !liststr.isEmpty()) {
+            list = CalModelCluster.cal(liststr, 2);
+        }
+        //按权重将聚类结果进行返回。
+        if (list != null && !list.isEmpty()) {
+            int max = list.get(0).getCount();
+            int i = 0;
+            for (; i < list.size() && i < 100; i++) {
+                if (list.get(i).getCount() < max / 20)
+                    break;
+            }
+            if (i < list.size()) {
+                list = list.subList(0, i);
+            }
+        }
+        long e = System.currentTimeMillis();
+        System.out.println("get the cluster time:>>>>" + (e - s));
+        return list;
+    }
+
+    public static void main(String[] args) {
+        List<WorkOrderBean> workOrderBeans = new ArrayList();
+        WorkOrderBean workOrderBean1 = new WorkOrderBean();
+        workOrderBean1.setId("1");
+        workOrderBean1.setTextContent(
+                "3175_A.wav 70_19200_她很高兴说有好有好麻烦您看下下一班的高三的农村都觉得是县城记下去再发现成这是指一般的那种但也有具体的有的也有可能有具体的范围涉及三十一套单位这一辈子他也没了钱去杀了九一八九九的正面不限量套餐？\n" +
+                "3175_Q.wav\n 70_22190_你好我想问一下咱们那个电信不是有的套餐只针对于农村就是那个通话时间的那个当时我想呃我想问一下他这个农村的范围知道听你说我没有好我就是想扮好呢就是像过去一样他这个范围吧现场也算农村如果那个就是你能帮我看一下嘛就是我就是有一个一千分钟的阿呆？");
+        WorkOrderBean workOrderBean2 = new WorkOrderBean();
+        workOrderBean2.setId("2");
+        workOrderBean2.setTextContent(
+                "3176_A.wav 70_10220_你好幸福嘻哈有一个五十块钱一个月的流量版绅士这种就不是小三的也可能是成七八月份的如果你不推电话本是我把你推进门今天会下雨？"+
+                        "3176_Q.wav 70_5740_是吗李娜加油吧？");
+        workOrderBeans.add(workOrderBean1);
+        workOrderBeans.add(workOrderBean2);
+        try {
+            clusterCal(workOrderBeans);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
 
