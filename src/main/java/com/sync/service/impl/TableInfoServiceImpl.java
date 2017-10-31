@@ -24,4 +24,8 @@ public class TableInfoServiceImpl implements TableInfoService {
         new TableInfoDaoImpl().dataGetAndAnalyze();
     }
 
+    public void noDataGetAndAnalyze() {
+        new TableInfoDaoImpl().noDataGetAndAnalyze();
+    }
+
 }

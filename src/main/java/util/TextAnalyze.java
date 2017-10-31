@@ -19,6 +19,7 @@ import java.util.Map;
 @Log
 public class TextAnalyze {
 
+
     /**
      * 拼接模型json
      */
@@ -36,9 +37,81 @@ public class TextAnalyze {
     }
 
     /**
-     * 标签分析
+     * 标签分析（非关键场景）
      */
-    public static int[][] categoryAnalyze(String modelString, List<WorkOrderBean> workOrderBeans, List<CategoryBean> categoryBeans) {
+    public static int[][] categoryAnalyzeNo(String modelString, List<WorkOrderBean> workOrderBeans, Map<String, Integer> map) {
+
+        int[][] tagAnalysisArr = new int[CountyMapping.getNumOfCounty() + 1][map.size() + 1];
+        StartClass sc = new StartClass(modelString);
+        Integer countyIndex;
+        Integer categoryIndex;
+        String categoryAlias;
+        StringBuilder keyword_sb = new StringBuilder();
+        JSONObject eachWorkOrderMatchCategroy;
+        String firstCategoryAlias_s;
+        JSONObject firstCategory_jo;
+        WorkOrderBean workOrderBean;
+        for (int i = 0; i < workOrderBeans.size(); i++) {
+
+            workOrderBean = workOrderBeans.get(i);
+//            传入标题和内容的String类型，返回json类型
+//            {"result":[{"negative":"1","tagclassly":"快递速度快","words":"就收到","weight":"388"},{"negative":"1","tagclassly":
+//                "快递正面评价", "words":"快递.给力","weight":"240"},{"negative":"-1","tagclassly":"评价","words":"是一般","weight":"28"}],"code":"true"}
+            String content = workOrderBean.getTextContent();
+            // 获取地区index
+            countyIndex = CountyMapping.getIndexByGivenCode(workOrderBean.getCid());
+            String result = sc.run("title", content);
+            log.info("result>>>>>>" + result);
+            keyword_sb.delete(0, keyword_sb.length());
+            JSONObject resp_jo = new JSONObject(result);
+            if(StringUtils.isEmpty(resp_jo)){
+                continue;
+            }
+            Object resultTemp = resp_jo.get("result");
+            JSONArray result_ja = resp_jo.getJSONArray("result");
+            if(StringUtils.isEmpty(resultTemp) || result_ja.isEmpty()){
+                continue;
+            }
+            JSONObject eachresult_jo;
+            eachWorkOrderMatchCategroy = new JSONObject();
+            for (int j = 0; j < result_ja.length(); j++) {
+                eachresult_jo = (JSONObject) result_ja.get(j);
+                // 取业务所属类目index
+                categoryAlias = eachresult_jo.get("tagclassly").toString();
+
+                //拼接上分析出来的name值
+//                categoryIndex = CategoryMapping.getIndexByGivenAlias(categoryAlias);
+                categoryIndex = map.get(categoryAlias);
+
+                // 对应地区和业务的变量增1
+                ++tagAnalysisArr[countyIndex][categoryIndex];
+
+                keyword_sb.append(eachresult_jo.get("words").toString());
+                if (j != result_ja.length() - 1) {
+                    keyword_sb.append(",");
+                }
+                // 先取一级节点
+                firstCategoryAlias_s = splitFirstCategoryAlias(categoryAlias);
+                // 设置二级节点内容
+                if (eachWorkOrderMatchCategroy.has(firstCategoryAlias_s)) {
+                    firstCategory_jo = eachWorkOrderMatchCategroy.getJSONObject(firstCategoryAlias_s);
+                    firstCategory_jo.put(categoryAlias, eachresult_jo.get("weight").toString());
+                } else {
+                    firstCategory_jo = new JSONObject();
+                    firstCategory_jo.put(categoryAlias, eachresult_jo.get("weight").toString());
+                    eachWorkOrderMatchCategroy.put(firstCategoryAlias_s, firstCategory_jo);
+                }
+            }
+            workOrderBean.setKeyword(keyword_sb.toString());
+            workOrderBean.setMatchCategory(eachWorkOrderMatchCategroy.toString());
+        }
+        return tagAnalysisArr;
+    }
+
+    /**
+     * 标签分析（关键场景）
+     */
+    public static int[][] categoryAnalyze(String modelString, List<WorkOrderBean> workOrderBeans) {
 
         int[][] tagAnalysisArr = new int[CountyMapping.getNumOfCounty() + 1][CategoryMapping.getNumOfCategory() + 1];
         StartClass sc = new StartClass(modelString);
@@ -104,18 +177,18 @@ public class TextAnalyze {
     }
 
     /**
-     * 观点聚类（暂时没用到，后期用）
+     * 观点聚类
      */
-    public List<ModelCluster> clusterCal(List<WorkOrderContentBean> listinfo) throws Exception {
+    public static List<ModelCluster> clusterCal(List<WorkOrderBean> listinfo) throws Exception {
         List<ModelCluster> list = new ArrayList<ModelCluster>();
 
         if (listinfo == null || listinfo.isEmpty()) return null;
         List<InfoPair> liststr = new ArrayList<InfoPair>();
 
-        for (WorkOrderContentBean workOrder : listinfo) {
+        for (WorkOrderBean workOrder : listinfo) {
             InfoPair infp = new InfoPair();
-            infp.id = workOrder.getWorkOrderId();
-            infp.content = workOrder.getContent();
+            infp.id = workOrder.getId();
+            infp.content = workOrder.getTextContent();
             liststr.add(infp);
         }
         System.out.println("get the cal datas:>>>>" + liststr.size());

@@ -2,16 +2,14 @@ package com.sync.dao.impl;
 
 import com.sync.dao.TableInfoDao;
 import com.sync.pojo.*;
+import com.zhxg.gdjl.ModelCluster;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 import util.*;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author ljw
@@ -26,7 +24,7 @@ public class TableInfoDaoImpl implements TableInfoDao {
     DBConnection dbConnection = DBConnection.getInstance();
 
     /**
-     * 取出分析数据并入库
+     * 分析数据并入库（关键场景）
      */
     public void dataGetAndAnalyze() {
         //查询分类信息
@@ -35,11 +33,74 @@ public class TableInfoDaoImpl implements TableInfoDao {
         //工单信息和相关表的信息
         List<WorkOrderBean> workOrderBeans = queryTableInfoWorkorder();
         log.info(">>>>>>>>>>>>>>>>>workOrderBeans.size is>>>>>>>>>>>>>>>>>"+workOrderBeans.size());
-        int[][] resultArray = TextAnalyze.categoryAnalyze(modelString, workOrderBeans, categoryBeans);
+        int[][] resultArray = TextAnalyze.categoryAnalyze(modelString, workOrderBeans);
 
+        CountResultBean countResultBean = getJsonResult(resultArray);
+        //插入json数据
+        addCountresult(countResultBean);
+        //更新工单表 插入分析结果
+        updateWorkorder(workOrderBeans, "matchCategory");
+    }
+
+    /**
+     * @Author: ljavaw
+     * @Description: 分析数据并入库（非关键场景）
+     * @Date:15:39 2017/10/25
+     */
+    public void noDataGetAndAnalyze(){
+        try {
+            //工单信息和相关表的信息(非关键场景 负面文本信息 风险预警)
+            List<WorkOrderBean> workOrderBeansRisk = queryTableInfoWorkorderNo("-1");
+            log.info(">>>>>>>>>>>>>>>>>workOrderBeans.size is>>>>>>>>>>>>>>>>>"+workOrderBeansRisk.size());
+            //工单信息和相关表的信息(非关键场景 所有文本 热点挖掘)
+            List<WorkOrderBean> workOrderBeansHot = queryTableInfoWorkorderNo(null);
+            log.info(">>>>>>>>>>>>>>>>>workOrderBeans.size is>>>>>>>>>>>>>>>>>"+workOrderBeansHot.size());
+
+            int[][] resultArrayRisk = null;
+            int[][] resultArrayHot = null;
+            if(workOrderBeansRisk != null && workOrderBeansRisk.size() > 0){
+                //聚类
+                List<ModelCluster> modelClusterListRisk = TextAnalyze.clusterCal(workOrderBeansRisk);
+                //分析并统计数据
+                List<CategoryBean> categoryBeansRisk = getCategoryBean(modelClusterListRisk);
+                //拼接分析时用的modelString
+                String modelStringRisk = TextAnalyze.getModelStr(categoryBeansRisk);
+                //获得统计词频数和工单数时用的
+                CategoryMapping.getModelMap(categoryBeansRisk, 1);
+                resultArrayRisk = TextAnalyze.categoryAnalyzeNo(modelStringRisk, workOrderBeansRisk, CategoryMapping.categryMapRisk);
+            }
+            if(workOrderBeansHot != null && workOrderBeansHot.size() > 0){
+                //聚类
+                List<ModelCluster> modelClusterListHot = TextAnalyze.clusterCal(workOrderBeansHot);
+                //分析并统计数据
+                List<CategoryBean> categoryBeansHot = getCategoryBean(modelClusterListHot);
+                //拼接分析时用的modelString
+                String modelStringHot = TextAnalyze.getModelStr(categoryBeansHot);
+                //获得统计词频数和工单数时用的
+                CategoryMapping.getModelMap(categoryBeansHot, 2);
+                resultArrayHot = TextAnalyze.categoryAnalyzeNo(modelStringHot, workOrderBeansHot, CategoryMapping.categryMapHot);
+
+            }
+            CountResultBean countResultBean = getJsonResultNo(resultArrayRisk, resultArrayHot);
+
+            //插入json数据
+            addCountresult(countResultBean);
+            //更新工单表 插入分析结果
+            updateWorkorder(workOrderBeansRisk, "riskword");
+            updateWorkorder(workOrderBeansHot, "hotword");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @Author: ljavaw
+     * @Description: 拼接最终结果的json（关键场景）
+     * @Date:16:00 2017/10/26
+     */
+    public CountResultBean getJsonResult(int[][] resultArray){
         //统计的每个地区的工单条数
         Map<String, Integer> countMap = queryTableInfoCount();
-
         //各个市
         JSONObject CZjsonObject = new JSONObject();
         JSONObject TSjsonObject = new JSONObject();
@@ -89,13 +150,6 @@ public class TableInfoDaoImpl implements TableInfoDao {
         for (int i = 1; i < resultArray.length; i++) {
             //各个父分类
             JSONObject fatherJsonObject = new JSONObject();
-//            JSONObject CFLHjsonObject = new JSONObject();
-//            JSONObject JZjsonObject = new JSONObject();
-//            JSONObject XFXYjsonObject = new JSONObject();
-//            JSONObject HJHKHGXjsonObject = new JSONObject();
-//            JSONObject TCQYjsonObject = new JSONObject();
-//            JSONObject XSHDjsonObject = new JSONObject();
-//            JSONObject WTWJjsonObject = new JSONObject();
             //各个父分类 统计
             JSONObject XZjsonObjectCount = new JSONObject();
             JSONObject CFLHjsonObjectCount = new JSONObject();
@@ -299,11 +353,173 @@ public class TableInfoDaoImpl implements TableInfoDao {
         countResultBean.setTS(TSjsonObject != null ? TSjsonObject.toString() : null);
         countResultBean.setZJK(ZJKjsonObject != null ? ZJKjsonObject.toString() : null);
         countResultBean.setXT(XTjsonObject != null ? XTjsonObject.toString() : null);
-        addCountresult(countResultBean);
-        //更新工单表 插入分析结果
-        updateWorkorder(workOrderBeans);
+
+        return countResultBean;
     }
 
+    /**
+     * @Author: ljavaw
+     * @Description: 拼接最终结果的json（非关键场景）
+     * @Date:16:00 2017/10/26
+     */
+    public CountResultBean getJsonResultNo(int[][] resultArrayRisk, int[][] resultArrayHot){
+        //各个市
+        JSONObject CZjsonObject = new JSONObject();
+        JSONObject TSjsonObject = new JSONObject();
+        JSONObject QHDjsonObject = new JSONObject();
+        JSONObject LFjsonObject = new JSONObject();
+        JSONObject ZJKjsonObject = new JSONObject();
+        JSONObject XTjsonObject = new JSONObject();
+        JSONObject HDjsonObject = new JSONObject();
+        JSONObject BDjsonObject = new JSONObject();
+        JSONObject SJZjsonObject = new JSONObject();
+        JSONObject CDjsonObject = new JSONObject();
+        JSONObject HSjsonObject = new JSONObject();
+        //市下的区县集合
+        JSONObject CZcountyJsonObjectTempArea = new JSONObject();
+        JSONObject TScountyJsonObjectTempArea = new JSONObject();
+        JSONObject QHDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject LFcountyJsonObjectTempArea = new JSONObject();
+        JSONObject ZJKcountyJsonObjectTempArea = new JSONObject();
+        JSONObject XTcountyJsonObjectTempArea = new JSONObject();
+        JSONObject HDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject BDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject SJZcountyJsonObjectTempArea = new JSONObject();
+        JSONObject CDcountyJsonObjectTempArea = new JSONObject();
+        JSONObject HScountyJsonObjectTempArea = new JSONObject();
+        int CZCount = 0;
+        int TSCount = 0;
+        int QHDCount = 0;
+        int LFCount = 0;
+        int ZJKCount = 0;
+        int XTCount = 0;
+        int HDCount = 0;
+        int BDCount = 0;
+        int SJZCount = 0;
+        int CDCount = 0;
+        int HSCount = 0;
+        //以地区进行循环
+        for (int i = 1; i < CountyMapping.indexInfoMap.size(); i++) {
+            /**
+             * 热点挖掘 用于数据统计
+             */
+            //拼接json
+            JSONObject clusterKeyTempJsonObjectHot = new JSONObject();
+            //热点挖掘聚类Top10的信息总量
+            int clusterCountHot = 0;
+            //热点挖掘聚类信息总量
+            int clusterAllCountHot = 0;
+            if(resultArrayHot != null && resultArrayHot.length > 0){
+                Map<String, Integer> clusterMapHot = handleCount(resultArrayHot[i]);
+                //map结果进行排序
+                Map<String, Integer> clusterMapResultHot = MapUtil.sortByValueDesc(clusterMapHot);
+                this.spliceData(clusterMapResultHot, clusterKeyTempJsonObjectHot, clusterCountHot, clusterAllCountHot);
+            }
+            /**
+             * 风险预警 用于数据统计
+             */
+            //拼接json
+            JSONObject clusterKeyTempJsonObjectRisk = new JSONObject();
+            //风险预警聚类Top10的信息总量
+            int clusterCountRisk = 0;
+            //风险预警聚类信息总量
+            int clusterAllCountRisk = 0;
+            if(resultArrayRisk != null && resultArrayRisk.length > 0){
+                Map<String, Integer> clusterMapRisk = handleCount(resultArrayRisk[i]);
+                //map结果进行排序
+                Map<String, Integer> clusterMapResultRisk = MapUtil.sortByValueDesc(clusterMapRisk);
+                this.spliceData(clusterMapResultRisk, clusterKeyTempJsonObjectRisk, clusterCountRisk, clusterAllCountRisk);
+            }
+            //区县的统计结构
+            JSONObject countyJsonObject = new JSONObject();
+            String countyAlias = CountyMapping.getAliasByGivenIndex(String.valueOf(i));
+            countyJsonObject.put("count", clusterAllCountHot+clusterAllCountRisk);
+            countyJsonObject.put("clusterKey", clusterKeyTempJsonObjectHot);
+            countyJsonObject.put("emotionKey", clusterKeyTempJsonObjectRisk);
+            countyJsonObject.put("clusterCount", clusterCountHot);
+            countyJsonObject.put("emotionCount", clusterCountRisk);
+
+            if(countyAlias != null && countyAlias.contains("CZ-")){
+                CZcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("TS-")){
+                TScountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("QHD-")){
+                QHDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("LF-")){
+                LFcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("ZJK-")){
+                ZJKcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("XT-")){
+                XTcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("HD-")){
+                HDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("BD-")){
+                BDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            } else if(countyAlias != null && countyAlias.contains("SJZ-")){
+                SJZcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("CD-")){
+                CDcountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }else if(countyAlias != null && countyAlias.contains("HS-")){
+                HScountyJsonObjectTempArea.put(countyAlias, countyJsonObject);
+            }
+        }
+        SJZjsonObject.put("COUNT", SJZCount);
+        SJZjsonObject.put("COUNTY", SJZcountyJsonObjectTempArea);
+        BDjsonObject.put("COUNT", BDCount);
+        BDjsonObject.put("COUNTY", BDcountyJsonObjectTempArea);
+        CDjsonObject.put("COUNT", CDCount);
+        CDjsonObject.put("COUNTY", CDcountyJsonObjectTempArea);
+        CZjsonObject.put("COUNT", CZCount);
+        CZjsonObject.put("COUNTY", CZcountyJsonObjectTempArea);
+        HDjsonObject.put("COUNT", HDCount);
+        HDjsonObject.put("COUNTY", HDcountyJsonObjectTempArea);
+        HSjsonObject.put("COUNT", HSCount);
+        HSjsonObject.put("COUNTY", HScountyJsonObjectTempArea);
+        LFjsonObject.put("COUNT", LFCount);
+        LFjsonObject.put("COUNTY", LFcountyJsonObjectTempArea);
+        QHDjsonObject.put("COUNT", QHDCount);
+        QHDjsonObject.put("COUNTY", QHDcountyJsonObjectTempArea);
+        TSjsonObject.put("COUNT", TSCount);
+        TSjsonObject.put("COUNTY", TScountyJsonObjectTempArea);
+        ZJKjsonObject.put("COUNT", ZJKCount);
+        ZJKjsonObject.put("COUNTY", ZJKcountyJsonObjectTempArea);
+        XTjsonObject.put("COUNT", XTCount);
+        XTjsonObject.put("COUNTY", XTcountyJsonObjectTempArea);
+
+        //插入分析结果 向countresult表
+        CountResultBean countResultBean = new CountResultBean();
+        countResultBean.setSJZ(SJZjsonObject != null ? SJZjsonObject.toString() : null);
+        countResultBean.setBD(BDjsonObject != null ? BDjsonObject.toString() : null);
+        countResultBean.setCD(CDjsonObject != null ? CDjsonObject.toString() : null);
+        countResultBean.setCZ(CZjsonObject != null ? CZjsonObject.toString() : null);
+        countResultBean.setHD(HDjsonObject != null ? HDjsonObject.toString() : null);
+        countResultBean.setHS(HSjsonObject != null ? HSjsonObject.toString() : null);
+        countResultBean.setLF(LFjsonObject != null ? LFjsonObject.toString() : null);
+        countResultBean.setQHD(QHDjsonObject != null ? QHDjsonObject.toString() : null);
+        countResultBean.setTS(TSjsonObject != null ? TSjsonObject.toString() : null);
+        countResultBean.setZJK(ZJKjsonObject != null ? ZJKjsonObject.toString() : null);
+        countResultBean.setXT(XTjsonObject != null ? XTjsonObject.toString() : null);
+
+        return countResultBean;
+    }
+
+    /**
+     * @Author: ljavaw
+     * @Description: 向CategoryBean中赋值
+     * @Date:15:54 2017/10/26
+     */
+    public List<CategoryBean> getCategoryBean(List<ModelCluster> modelClusterList){
+        List<CategoryBean> categoryBeans = new ArrayList<>();
+        for (int i = 0; i <modelClusterList.size(); i++) {
+            ModelCluster modelCluster = modelClusterList.get(i);
+            CategoryBean categoryBean = new CategoryBean();
+            categoryBean.setName(modelCluster.getName());
+            categoryBean.setAlias(modelCluster.getName());
+            categoryBean.setRoleWord(modelCluster.getContent());
+            categoryBeans.add(categoryBean);
+        }
+        return categoryBeans;
+    }
     /**
      * 查询数据(category分类表)
      */
@@ -380,6 +596,52 @@ public class TableInfoDaoImpl implements TableInfoDao {
                 workOrderBean.setTextContent(String.valueOf(rs.getObject("content"))+String.valueOf(rs.getObject("content_a"))+String.valueOf(rs.getObject("content_q")));
                 workOrderBean.setCountyAlias(String.valueOf(rs.getObject("alias")));
                 workOrderBean.setCid(String.valueOf(rs.getObject("cid")));
+                beanList.add(workOrderBean);
+            }
+        } catch (SQLException e) {
+            log.error("TableInfoDaoImpl.queryTableInfoWorkorder() >>>>>>", e);
+        } finally {
+            dbConnection.close(ps, rs, null, conn);
+        }
+        return beanList;
+    }
+
+   /**
+    * @Author: ljavaw
+    * @Description: 查询数据(workorder 工单表及相关联表,非关键场景)
+    * flag:-1 风险预警； 非关键场景的所有文本信息：
+    * flag:null 热点挖掘  非关键场景的所有文本信息：
+    * @Date:17:35 2017/10/25
+    */
+    public List<WorkOrderBean> queryTableInfoWorkorderNo(String flag) {
+
+        List<WorkOrderBean> beanList = new ArrayList<>();
+
+        Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "";
+        if(flag != null && "-1".equals(flag)){
+            sql = "SELECT w.id, w.emotion, wc.content_a, wc.content_q, wc.content, c.alias, c.id cid FROM ((workordercontent wc " +
+                    "JOIN workorder w ON w.id = wc.workOrderId AND wc.content_a IS NOT NULL AND w.isAnalyze = 1 AND w.emotion = '"+flag+"' AND w.matchCategory IS NULL) " +
+                    "JOIN t_c_users tcu ON w.phoneNum = tcu.DEVICE_NUMBER) JOIN county c ON tcu.CITY_NO = c.id AND c.alias IS NOT NULL";
+
+        }else{
+            sql = "SELECT w.id, w.emotion, wc.content_a, wc.content_q, wc.content, c.alias, c.id cid FROM ((workordercontent wc " +
+                    "JOIN workorder w ON w.id = wc.workOrderId AND wc.content_a IS NOT NULL AND w.isAnalyze = 1 AND w.matchCategory IS NULL) " +
+                    "JOIN t_c_users tcu ON w.phoneNum = tcu.DEVICE_NUMBER) JOIN county c ON tcu.CITY_NO = c.id AND c.alias IS NOT NULL";
+        }
+        try {
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                WorkOrderBean workOrderBean = new WorkOrderBean();
+                workOrderBean.setId(String.valueOf(rs.getObject("id")));
+                //以下字段分为两种情况：1.非话者分离（content字段有值）2.话者分离（content_a和content_q字段有值）
+                workOrderBean.setTextContent(String.valueOf(rs.getObject("content"))+String.valueOf(rs.getObject("content_a"))+String.valueOf(rs.getObject("content_q")));
+                workOrderBean.setCountyAlias(String.valueOf(rs.getObject("alias")));
+                workOrderBean.setCid(String.valueOf(rs.getObject("cid")));
+                workOrderBean.setEmotion(String.valueOf(rs.getObject("emotion")));
                 beanList.add(workOrderBean);
             }
         } catch (SQLException e) {
@@ -494,13 +756,13 @@ public class TableInfoDaoImpl implements TableInfoDao {
      * 更新工单表，插入相应的分析字段
      * @param beanList
      */
-    public void updateWorkorder(List<WorkOrderBean> beanList) {
+    public void updateWorkorder(List<WorkOrderBean> beanList, String fieldName) {
 
         PreparedStatement ps = null;
         Connection conn = dbConnection.getConnection(DBConnection.DB_PROPERTIES.get("localurl"), DBConnection.DB_PROPERTIES.get("localusername"), DBConnection.DB_PROPERTIES.get("localpassword"));
         try {
             conn.setAutoCommit(false);
-            String sql = "UPDATE workorder SET keyword=?, emotion=?, matchCategory=?, isAnalyze=?, phoneLocation=? WHERE id = ?";
+            String sql = "UPDATE workorder SET keyword=?, emotion=?, "+fieldName+"=?, isAnalyze=?, phoneLocation=? WHERE id = ?";
             ps = conn.prepareStatement(sql);
             for (int i = 0; i < beanList.size(); i++) {
                 WorkOrderBean workOrderBean = beanList.get(i);
@@ -522,6 +784,49 @@ public class TableInfoDaoImpl implements TableInfoDao {
             log.error("TableInfoDaoImpl.updateWorkorder() >>>>>>", e);
         } finally {
             dbConnection.close(ps, null, null, conn);
+        }
+    }
+
+    /**
+     * @Author: ljavaw
+     * @Description: 处理统计结果
+     * @Date:10:16 2017/10/30
+     */
+    public Map<String, Integer> handleCount(int[] resultArray){
+        Map<String, Integer> clusterMap = new HashMap<>();
+        for (int j = 1; j < resultArray.length; j++) {
+            String categorCode = CategoryMapping.indexMapHot.get(String.valueOf(j));
+            if (clusterMap != null && clusterMap.containsKey(categorCode)) {
+                Integer orderN = clusterMap.get(categorCode);
+                orderN = orderN + resultArray[j];
+                clusterMap.put(categorCode, orderN);
+            } else {
+                clusterMap.put(categorCode, resultArray[j]);
+            }
+        }
+        return clusterMap;
+    }
+
+    /**
+     * @Author: ljavaw
+     * @Description: 拼接数据
+     * @Date:10:25 2017/10/30
+     */
+    public void spliceData(Map<String, Integer> clusterMapResult, JSONObject clusterKeyTempJsonObject, int clusterCount, int clusterAllCount){
+        int temp = 1;
+        for (Map.Entry<String, Integer> entry : clusterMapResult.entrySet()) {
+            String key = entry.getKey() ;
+            Integer value = entry.getValue();
+
+            JSONObject clusterCategorJsonObject = new JSONObject();
+            clusterCategorJsonObject.put("wordF", 0);
+            clusterCategorJsonObject.put("orderN", value);
+            clusterKeyTempJsonObject.put(key, clusterCategorJsonObject);
+            if(temp == 10){
+                clusterCount = clusterCount + value;
+            }
+            clusterAllCount = clusterAllCount + value;
+            temp++;
         }
     }
 }

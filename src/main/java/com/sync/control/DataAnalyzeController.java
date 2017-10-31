@@ -22,7 +22,7 @@ public class DataAnalyzeController {
         dataAnalyzeController.dataAnalyze();
     }
     //启动时执行一次，后面每隔12小时执行一次（毫秒）
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
+//    @Scheduled(fixedRate = 1000 * 60 * 60 * 12)
     public void dataAnalyze(){
         try {
             log.info("=============================DataGetAndAnalyzeController start===============================");

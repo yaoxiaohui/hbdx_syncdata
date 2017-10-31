@@ -17,4 +17,6 @@ public interface TableInfoDao {
     void addData(List<Map<String, String>> mapList, String table, String fields);
 
     void dataGetAndAnalyze();
+
+    void noDataGetAndAnalyze();
 }

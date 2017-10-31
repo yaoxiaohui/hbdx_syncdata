@@ -20,6 +20,11 @@ public class CategoryMapping {
     private static final Map<String, String> indexInfoMap = new HashMap<String, String>();
     // 如1,融合新装,1,2,XZ-RHXZ，信息如<"融合新装","1,融合新装,1,2,XZ-RHXZ">
     private static final Map<String, String> nameInfoMap = new HashMap<String, String>();
+    //非关键场景使用
+    public static Map<String, String> indexMapRisk = new HashMap<>();
+    public static Map<String, Integer> categryMapRisk = new HashMap<>();
+    public static Map<String, String> indexMapHot = new HashMap<>();
+    public static Map<String, Integer> categryMapHot = new HashMap<>();
 
     static {
         infoList.add("1,融合新装,1,2,XZ-RHXZ");
@@ -59,6 +64,26 @@ public class CategoryMapping {
     }
 
     private CategoryMapping() {
+    }
+
+    /**
+     * 获得统计词频数和工单数时用的
+     */
+    public static void getModelMap(List<CategoryBean> sonCategoryList, int flag) {
+        if(sonCategoryList != null){
+
+            for (int i = 0; i < sonCategoryList.size(); i++) {
+                CategoryBean categoryBean = sonCategoryList.get(i);
+                int temp = i+1;
+                if(flag == 1){
+                    indexMapRisk.put(String.valueOf(temp), categoryBean.getName());
+                    categryMapRisk.put(categoryBean.getName(), temp);
+                }else if(flag == 2){
+                    indexMapHot.put(String.valueOf(temp), categoryBean.getName());
+                    categryMapHot.put(categoryBean.getName(), temp);
+                }
+            }
+        }
     }
 
     /**

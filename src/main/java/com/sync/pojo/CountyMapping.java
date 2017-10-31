@@ -15,11 +15,11 @@ import java.util.Map;
 public class CountyMapping {
 
     // 如"1,018180021,CZ-QX"
-    private static final List<String> infoList = new ArrayList<String>();
+    public static final List<String> infoList = new ArrayList<String>();
     // 如1,018180021,CZ-QX，信息如<"1","1,018180021,CZ-QX">
-    private static final Map<String, String> indexInfoMap = new HashMap<String, String>();
+    public static final Map<String, String> indexInfoMap = new HashMap<String, String>();
     // 如1,018180021,CZ-QX，信息如<"018180021","1,018180021,CZ-QX">
-    private static final Map<String, String> codeInfoMap = new HashMap<String, String>();
+    public static final Map<String, String> codeInfoMap = new HashMap<String, String>();
 
     static {
 
